@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="BlackJack.ucDealerHand"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:cust="clr-namespace:BlackJack"
+             mc:Ignorable="d" 
+             d:DesignHeight="174" d:DesignWidth="196" xmlns:my="clr-namespace:BlackJack">
+    <Grid>
+        <Label Content="" FontWeight="Bold" Foreground="White" Height="28" Margin="22,19,139,127" Name="lblDealerCount" FontSize="10" />
+        
+        <Label Content="Dealer" Height="28" HorizontalAlignment="Left" Margin="63,0,0,43" Name="lblDealer" VerticalAlignment="Bottom" Foreground="#E6FFFFFF" FontWeight="Bold" IsEnabled="True" Visibility="Hidden" />
+        <cust:ucSmallCardContainer Margin="44,39,104,72" x:Name="cDlrCrd1" Width="42" Height="55" />
+        <my:ucSmallCardContainer Height="55" Margin="53,42,96,77" x:Name="cDlrCrd2" />
+        <my:ucSmallCardContainer Height="55" Margin="59,28,90,91" x:Name="cDlrCrd3" />
+        <my:ucSmallCardContainer Height="55" Margin="64,19,85,100" x:Name="cDlrCrd4" />
+        <my:ucSmallCardContainer Height="55" Margin="70,12,79,107" x:Name="cDlrCrd5" />
+    </Grid>
+</UserControl>
