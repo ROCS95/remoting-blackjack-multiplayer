@@ -83,7 +83,7 @@ namespace CardsLibrary
 
         protected void repopulate()
         {
-            // Remove "old" cards
+            // Remove "old" card
             cards.Clear();
 
             // Populate with new cards
