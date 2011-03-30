@@ -13,7 +13,7 @@
         <cust:ucSmallCardContainer Margin="44,39,104,72" x:Name="cDlrCrd1" Width="42" Height="55" />
         <my:ucSmallCardContainer Height="55" Margin="53,42,96,77" x:Name="cDlrCrd2" />
         <my:ucSmallCardContainer Height="55" Margin="59,28,90,91" x:Name="cDlrCrd3" />
-        <my:ucSmallCardContainer Height="55" Margin="64,19,85,100" x:Name="cDlrCrd4" />
-        <my:ucSmallCardContainer Height="55" Margin="70,12,79,107" x:Name="cDlrCrd5" />
+        <my:ucSmallCardContainer Height="55" Margin="65,19,84,100" x:Name="cDlrCrd4" />
+        <my:ucSmallCardContainer Height="55" Margin="71,12,78,107" x:Name="cDlrCrd5" />
     </Grid>
 </UserControl>

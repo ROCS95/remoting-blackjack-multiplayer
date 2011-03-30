@@ -63,6 +63,9 @@
     <Compile Include="ucDealerHand.xaml.cs">
       <DependentUpon>ucDealerHand.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ucOtherPlayerHand.xaml.cs">
+      <DependentUpon>ucOtherPlayerHand.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ucSmallCardContainer.xaml.cs">
       <DependentUpon>ucSmallCardContainer.xaml</DependentUpon>
     </Compile>
@@ -83,6 +86,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ucDealerHand.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ucOtherPlayerHand.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
