@@ -6,7 +6,7 @@
  * Description:     Represents a standard playing card.
  * Version Info:    Modified by adding the [Serializable] attribute which allows 
  *                  the Card class to be used remotely. The marshaling type
- *                  is marshal-by-value.
+ *                  is marshal-by-value
  */
 using System;
 using System.Collections.Generic;
