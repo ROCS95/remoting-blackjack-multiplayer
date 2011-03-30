@@ -62,7 +62,9 @@ namespace BlackJack
             //clear all cards
             clearCards();
             plrCount = 0;
+            dlrCount = 0;
             lblCount.Content = plrCount;
+            DealerHand.lblDealerCount.Content = dlrCount;
 
             Card card = shoe.Draw();
             container1.SetCard(card);
@@ -92,7 +94,13 @@ namespace BlackJack
             else if( plrCount == 21 )
             {
                 MessageBox.Show("Blackjack!");
+                btnReady.IsEnabled = true;
+                btnHit.IsEnabled = false;
+                btnStay.IsEnabled = false;
+
+                finishDealersHand();
             }
+
             lblCount.Content = plrCount;
             btnReady.IsEnabled = false;
             btnHit.IsEnabled = true;
@@ -117,6 +125,10 @@ namespace BlackJack
         private void clearCards()
         {
             foreach (ucCardContainer uc in plrContainers)
+            {
+                uc.Clear();
+            }
+            foreach( ucSmallCardContainer uc in dlrContainers )
             {
                 uc.Clear();
             }
@@ -199,6 +211,7 @@ namespace BlackJack
         {
             DealerHand.cDlrCrd2.SetCard( dlrSecondCard, false );
             dlrCount += dlrSecondCard.Value;
+            DealerHand.lblDealerCount.Content = dlrCount;
 
             if( dlrCount < 17 )
             {
@@ -207,15 +220,36 @@ namespace BlackJack
             }
             else
             {
-                if( plrCount <= 21 && plrCount > dlrCount)
+                if( plrCount <= 21 && dlrCount <=21 )
+                {
+                    if( plrCount == dlrCount )
+                    {
+                        MessageBox.Show( "Push" );
+                    }
+                    else if( dlrCount < plrCount )
+                    {
+                        MessageBox.Show( "Winner!" );
+                    }
+                    else
+                    {
+                        MessageBox.Show( "Dealer Wins!" );
+                    }
+                }
+                else if( plrCount <= 21 && dlrCount > 21 )
                 {
                     MessageBox.Show( "Winner!" );
                 }
                 else
                 {
-                    MessageBox.Show( "Dealer Wins" );
+                    MessageBox.Show( "No Winner!" );
                 }
+               
             }
+        }
+
+        private void Window_Loaded( object sender, RoutedEventArgs e )
+        {
+
         }
     }
 }
