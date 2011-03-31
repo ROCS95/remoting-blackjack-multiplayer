@@ -57,6 +57,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ArrayList.cs" />
+    <Compile Include="MainUserHand.xaml.cs">
+      <DependentUpon>MainUserHand.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ucCardContainer.xaml.cs">
       <DependentUpon>ucCardContainer.xaml</DependentUpon>
     </Compile>
@@ -69,6 +72,10 @@
     <Compile Include="ucSmallCardContainer.xaml.cs">
       <DependentUpon>ucSmallCardContainer.xaml</DependentUpon>
     </Compile>
+    <Page Include="MainUserHand.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
