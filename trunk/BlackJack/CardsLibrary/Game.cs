@@ -9,13 +9,13 @@ namespace BlackJackLibrary
     {
         private Shoe shoe;
         private PlayerState pState = new PlayerState();
-        private Dictionary<String, ICallback> clientCallbacks = new Dictionary<string, ICallback>();
+        //private Dictionary<String, ICallback> clientCallbacks = new Dictionary<string, ICallback>();
 
         public PlayerState Join(string name, ICallback callback)
         {
             try
             {
-                clientCallbacks.Add(name, callback);
+                //clientCallbacks.Add(name, callback);
                 return pState;
             }
             catch (Exception)
