@@ -37,7 +37,7 @@ namespace BlackJack
             if( isSecondCard )
             {
                 cardIm.BeginInit();   
-                cardIm.StreamSource = Assembly.GetExecutingAssembly().GetManifestResourceStream( "BlackJack.img." + "b2fv.png" );
+                cardIm.StreamSource = Assembly.GetExecutingAssembly().GetManifestResourceStream( "BlackJackClient.img." + "b2fv.png" );
                 cardIm.EndInit();
 
             }
@@ -60,7 +60,7 @@ namespace BlackJack
                         break;
                 }
                 cardIm.BeginInit();
-                cardIm.StreamSource = Assembly.GetExecutingAssembly().GetManifestResourceStream( "BlackJack.img." + tvSuit + tvRank + ".png" );
+                cardIm.StreamSource = Assembly.GetExecutingAssembly().GetManifestResourceStream( "BlackJackClient.img." + tvSuit + tvRank + ".png" );
                 cardIm.EndInit();
 
 
