@@ -130,12 +130,12 @@ namespace BlackJack
                 finishDealersHand();
             }
 
-            if( card.Value == card2.Value && card.Rank == card2.Rank )
-            {
-                btnSplit.IsEnabled = true;
-            }
+            //if( card.Value == card2.Value && card.Rank == card2.Rank )
+            //{
+            //    btnSplit.IsEnabled = true;
+            //}
 
-            btnSplit.IsEnabled = true;
+            //btnSplit.IsEnabled = true;
 
             mainHand.lblCount.Content = plrCount;
             btnReady.IsEnabled = false;
@@ -283,22 +283,22 @@ namespace BlackJack
             }
         }
 
-        private void btnSplit_Click( object sender, RoutedEventArgs e )
-        {
-            mainHand.Visibility = Visibility.Hidden;
+        //private void btnSplit_Click( object sender, RoutedEventArgs e )
+        //{
+        //    mainHand.Visibility = Visibility.Hidden;
 
-            splitHand1.card1 = mainHand.card1;
-            Card card = shoe.Draw();
-            splitHand1.card2.SetCard( card );
+        //    splitHand1.card1 = mainHand.card1;
+        //    Card card = shoe.Draw();
+        //    splitHand1.card2.SetCard( card );
 
-            splitHand2.card2 = mainHand.card2;
-            Card card2 = shoe.Draw();
-            splitHand2.card2.SetCard( card2 );
+        //    splitHand2.card2 = mainHand.card2;
+        //    Card card2 = shoe.Draw();
+        //    splitHand2.card2.SetCard( card2 );
 
-            splitHand1.Visibility = Visibility.Visible;
-            splitHand2.Visibility = Visibility.Visible;
+        //    splitHand1.Visibility = Visibility.Visible;
+        //    splitHand2.Visibility = Visibility.Visible;
 
-        }
+        //}
 
         private void btnDoubleDown_Click( object sender, RoutedEventArgs e )
         {
