@@ -15,7 +15,8 @@ namespace BlackJackLibrary
         {
             try
             {
-                //clientCallbacks.Add(name, callback);
+                clientCallbacks.Add(name, callback);
+                Console.WriteLine("Player: " + name + " has just joined the game!");
                 return pState;
             }
             catch (Exception)
