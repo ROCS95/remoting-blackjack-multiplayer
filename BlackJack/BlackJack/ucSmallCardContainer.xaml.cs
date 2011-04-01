@@ -13,7 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
 using System.Drawing;
-using CardsLibrary;
+using BlackJackLibrary;
 using System.Reflection;
 
 namespace BlackJack
@@ -37,7 +37,7 @@ namespace BlackJack
             if( isSecondCard )
             {
                 cardIm.BeginInit();   
-                cardIm.StreamSource =Assembly.GetExecutingAssembly().GetManifestResourceStream( "BlackJack.img." + "b2fv.png" );
+                cardIm.StreamSource = Assembly.GetExecutingAssembly().GetManifestResourceStream( "BlackJack.img." + "b2fv.png" );
                 cardIm.EndInit();
 
             }

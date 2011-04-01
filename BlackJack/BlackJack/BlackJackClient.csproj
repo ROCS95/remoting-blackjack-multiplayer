@@ -57,6 +57,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ArrayList.cs" />
+    <Compile Include="Callback.cs" />
     <Compile Include="MainUserHand.xaml.cs">
       <DependentUpon>MainUserHand.xaml</DependentUpon>
     </Compile>

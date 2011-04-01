@@ -11,7 +11,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using CardsLibrary;
+using BlackJackLibrary;
+using System.Runtime.Remoting;
 namespace BlackJack
 {
     /// <summary>
@@ -23,15 +24,32 @@ namespace BlackJack
         int dlrCount = 0;
         Card dlrSecondCard;
         bool isAce = false;
-        
+
         List<ucSmallCardContainer> dlrContainers = new List<ucSmallCardContainer>();
         List<ucCardContainer> plrContainers = new List<ucCardContainer>();
 
         private Shoe shoe;
 
+        // Create a reference to a hangman Game object
+        private Game game;
+
         public MainWindow()
         {
             InitializeComponent();
+
+            try
+            {
+                // Load the remoting configuration file
+                RemotingConfiguration.Configure("BlackJackClient.exe.config", false);
+
+                // Activate a game object
+                game = (Game)Activator.GetObject(typeof(Game),  "http://localhost:10000/game.soap");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+  
             btnReady.IsEnabled = false;
             btnHit.IsEnabled = false;
             btnStay.IsEnabled = false;
@@ -59,6 +77,7 @@ namespace BlackJack
             }
             else
             {
+                PlayerState state = game.Join(txtJoin.Text, new Callback(this));
                 lblPlayerName.Content = txtJoin.Text;
                 txtJoin.IsEnabled = false;
                 btnReady.IsEnabled = true;
@@ -290,6 +309,11 @@ namespace BlackJack
             btnSplit.IsEnabled = false;
             finishDealersHand();
 
+        }
+
+        public void UpdateClientWindow(PlayerState state)
+        {
+            
         }
     }
 }
