@@ -43,7 +43,7 @@ namespace BlackJack
                 RemotingConfiguration.Configure("BlackJackClient.exe.config", false);
 
                 // Activate a game object
-                game = (Game)Activator.GetObject(typeof(Game),  "http://localhost:10000/game.soap");
+                game = (Game)Activator.GetObject(typeof(Game),  "http://localhost:9999/game.soap");
             }
             catch (Exception ex)
             {
