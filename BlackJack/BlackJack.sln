@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlackJackClient", "BlackJack\BlackJackClient.csproj", "{C2CDA959-466C-4E1D-A81E-B33D2D6CC311}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlackJackLibrary", "CardsLibrary\BlackJackLibrary.csproj", "{4BC877F6-5236-4240-B264-5163C461102F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlackJackLibrary", "BlackJackLibrary\BlackJackLibrary.csproj", "{4BC877F6-5236-4240-B264-5163C461102F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlackJackServer", "BlackJackServer\BlackJackServer.csproj", "{7F59A179-868E-4D26-BB4E-9D8D71C79A7F}"
 EndProject

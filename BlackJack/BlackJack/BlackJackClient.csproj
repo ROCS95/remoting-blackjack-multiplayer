@@ -8,8 +8,8 @@
     <ProjectGuid>{C2CDA959-466C-4E1D-A81E-B33D2D6CC311}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BlackJack</RootNamespace>
-    <AssemblyName>BlackJack</AssemblyName>
+    <RootNamespace>BlackJackClient</RootNamespace>
+    <AssemblyName>BlackJackClient</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -138,12 +138,6 @@
     <Resource Include="img\felt.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CardsLibrary\BlackJackLibrary.csproj">
-      <Project>{4BC877F6-5236-4240-B264-5163C461102F}</Project>
-      <Name>BlackJackLibrary</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="img\b1fh.png" />
     <EmbeddedResource Include="img\b1fv.png" />
     <EmbeddedResource Include="img\b1pb.png" />
@@ -211,6 +205,12 @@
     <EmbeddedResource Include="img\sj.png" />
     <EmbeddedResource Include="img\sk.png" />
     <EmbeddedResource Include="img\sq.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BlackJackLibrary\BlackJackLibrary.csproj">
+      <Project>{4BC877F6-5236-4240-B264-5163C461102F}</Project>
+      <Name>BlackJackLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
