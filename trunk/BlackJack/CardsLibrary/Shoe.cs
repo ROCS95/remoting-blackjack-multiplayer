@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CardsLibrary
+namespace BlackJackLibrary
 {
     public class Shoe : MarshalByRefObject
     {
