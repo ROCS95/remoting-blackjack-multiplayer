@@ -136,9 +136,9 @@
     <Resource Include="img\felt.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CardsLibrary\CardsLibrary.csproj">
+    <ProjectReference Include="..\CardsLibrary\BlackJackLibrary.csproj">
       <Project>{4BC877F6-5236-4240-B264-5163C461102F}</Project>
-      <Name>CardsLibrary</Name>
+      <Name>BlackJackLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

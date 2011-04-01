@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CardsLibrary
 {
-    public interface IUpdatesFromServer
+    public interface PlayerState
     {
         void UpdatePlayerScreenCallback(Dictionary<String, List<Card>> cardsInPlay);
     }
