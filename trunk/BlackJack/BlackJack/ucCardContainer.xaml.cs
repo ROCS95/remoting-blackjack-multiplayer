@@ -50,7 +50,7 @@ namespace BlackJack
             ImageBrush brush = new ImageBrush();
             BitmapImage cardIm = new BitmapImage();
             cardIm.BeginInit();
-            cardIm.StreamSource = Assembly.GetExecutingAssembly().GetManifestResourceStream( "BlackJack.img." + tvSuit + tvRank + ".png" );
+            cardIm.StreamSource = Assembly.GetExecutingAssembly().GetManifestResourceStream( "BlackJackClient.img." + tvSuit + tvRank + ".png" );
             cardIm.EndInit();
 
             brush.ImageSource = cardIm;
