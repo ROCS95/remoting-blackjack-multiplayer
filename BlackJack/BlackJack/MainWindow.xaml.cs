@@ -306,7 +306,7 @@ namespace BlackJack
             btnHit.IsEnabled = false;
             btnStay.IsEnabled = false;
             btnDoubleDown.IsEnabled = false;
-            btnSplit.IsEnabled = false;
+            //btnSplit.IsEnabled = false;
             finishDealersHand();
 
         }
