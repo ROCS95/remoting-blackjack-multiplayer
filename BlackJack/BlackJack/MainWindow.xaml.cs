@@ -33,9 +33,13 @@ namespace BlackJack
         // Create a reference to a hangman Game object
         private Game game;
 
+        public delegate void UpdateWindowDelegate(PlayerState state);
+        public UpdateWindowDelegate updateDelegate;
+
         public MainWindow()
         {
             InitializeComponent();
+            updateDelegate = new UpdateWindowDelegate(UpdateClientWindow);
 
             try
             {
@@ -43,7 +47,7 @@ namespace BlackJack
                 RemotingConfiguration.Configure("BlackJackClient.exe.config", false);
 
                 // Activate a game object
-                game = (Game)Activator.GetObject(typeof(Game),  "http://localhost:9999/game.binary");
+                game = (Game)Activator.GetObject(typeof(Game), "tcp://localhost:12222/game.binary");
             }
             catch (Exception ex)
             {
@@ -69,6 +73,7 @@ namespace BlackJack
 
         }
 
+
         private void btnJoin_Click( object sender, RoutedEventArgs e )
         {
             if( txtJoin.Text.Equals( "" ) )
@@ -78,6 +83,7 @@ namespace BlackJack
             else
             {
                 PlayerState state = game.Join(txtJoin.Text, new Callback(this));
+                UpdateClientWindow(state);
                 lblPlayerName.Content = txtJoin.Text;
                 txtJoin.IsEnabled = false;
                 btnReady.IsEnabled = true;
@@ -159,7 +165,8 @@ namespace BlackJack
 
         private void btnHit_Click( object sender, RoutedEventArgs e )
         {
-            plrCardHit( plrContainers );
+            game.Hit();
+            //plrCardHit( plrContainers );
         }
 
         private void btnStay_Click( object sender, RoutedEventArgs e )
@@ -311,8 +318,27 @@ namespace BlackJack
 
         }
 
-        public void UpdateClientWindow(PlayerState state)
+        private delegate void ClientUpdateDelegate(PlayerState pState);
+
+        public void UpdateClientWindow(PlayerState pState)
         {
+            txtJoin.Dispatcher.BeginInvoke(new ClientUpdateDelegate(updateClientWindow), pState);
+        }
+        private void updateClientWindow(PlayerState state)
+        {
+            //update player's hand
+            foreach( Card card in state.CardsInPlay["Jer"] )
+            {
+                //check which container to put card in
+                foreach (ucCardContainer uc in plrContainers)
+                {
+                    if (!uc.IsSet)
+                    {
+                        uc.SetCard(card);
+                        break;
+                    }
+                }
+            }
             
         }
     }
