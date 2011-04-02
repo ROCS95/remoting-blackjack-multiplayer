@@ -27,6 +27,10 @@ namespace BlackJack
 
         List<ucSmallCardContainer> dealerContainers = new List<ucSmallCardContainer>();
         List<ucCardContainer> playerContainers = new List<ucCardContainer>();
+        List<ucSmallCardContainer> playerContainers1 = new List<ucSmallCardContainer>();
+        List<ucSmallCardContainer> playerContainers2 = new List<ucSmallCardContainer>();
+        List<ucSmallCardContainer> playerContainers3 = new List<ucSmallCardContainer>();
+        List<ucSmallCardContainer> playerContainers4 = new List<ucSmallCardContainer>();
 
         // Create a reference to a blackjack Game object
         private Game game;
@@ -63,11 +67,19 @@ namespace BlackJack
             playerContainers.Add( mainHand.card4 );
             playerContainers.Add( mainHand.card5 );
 
+            //dealer cards
             dealerContainers.Add( DealerHand.cDlrCrd1 );
             dealerContainers.Add( DealerHand.cDlrCrd2 );
             dealerContainers.Add( DealerHand.cDlrCrd3 );
             dealerContainers.Add( DealerHand.cDlrCrd4 );
             dealerContainers.Add( DealerHand.cDlrCrd5 );
+
+            //other player hand
+            playerContainers1.Add( PlayerContainer1.Card1 );
+            playerContainers1.Add( PlayerContainer1.Card2 );
+            playerContainers1.Add( PlayerContainer1.CArd3 );
+            playerContainers1.Add( PlayerContainer1.Card4 );
+            playerContainers1.Add( PlayerContainer1.Card5 );
 
         }
 
@@ -82,9 +94,10 @@ namespace BlackJack
             {
                 game.Join( txtJoin.Text, new Callback( this ) );
                 lblPlayerName.Content = txtJoin.Text;
-                txtBank.Text = Convert.ToString( game.currentPlayer.State.Bank );
+                txtBank.Text = Convert.ToString( game.getPlayer(lblPlayerName.Content.ToString()).State.Bank );
                 txtJoin.IsEnabled = false;
                 txtBid.IsEnabled = true;
+                DealerHand.lblDealerCount.Content = Convert.ToString(game.getPlayer( "Dealer" ).State.CardTotal);
             }
         }
 
@@ -97,9 +110,9 @@ namespace BlackJack
             mainHand.lblCount.Content = plrCount;
             DealerHand.lblDealerCount.Content = dlrCount;
 
-            game.Ready( Convert.ToInt32( txtBid.Text ) );
-            mainHand.lblCount.Content = game.currentPlayer.State.CardTotal;
-            txtBank.Text = Convert.ToString( game.currentPlayer.State.Bank );
+            game.Ready( Convert.ToInt32( txtBid.Text ), txtJoin.Text );
+            mainHand.lblCount.Content = game.getPlayer( lblPlayerName.Content.ToString() ).State.CardTotal;
+            txtBank.Text = Convert.ToString( game.getPlayer( lblPlayerName.Content.ToString() ).State.Bank );
 
             //plrCount += card.Value + card2.Value;
 
@@ -161,8 +174,7 @@ namespace BlackJack
         private void btnHit_Click( object sender, RoutedEventArgs e )
         {
             game.Hit();
-            mainHand.lblCount.Content = game.currentPlayer.State.CardTotal;
-            //plrCardHit( plrContainers );
+            mainHand.lblCount.Content = game.getPlayer( lblPlayerName.Content.ToString() ).State.CardTotal;
         }
 
         private void btnStay_Click( object sender, RoutedEventArgs e )
@@ -312,6 +324,7 @@ namespace BlackJack
                     }
                     else //other players on screen
                     {
+                        playerContainers1[cardNum++].SetCard( card, false );
 
                     }
                 }

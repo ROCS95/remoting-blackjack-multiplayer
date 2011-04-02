@@ -15,10 +15,10 @@
             </Canvas.Background>
             <cust:ucDealerHand x:Name="DealerHand" Canvas.Left="6" Canvas.Right="1" Canvas.Top="6" Height="172" Width="189" />
             <Button Canvas.Left="149" Canvas.Top="377" Content="Double Down" Height="23" IsEnabled="False" Name="btnDoubleDown" Width="86" Click="btnDoubleDown_Click" />
-            <cust:ucOtherPlayerHand Canvas.Left="269" Canvas.Top="6" x:Name="Player1" Height="60" Width="175" />
-            <cust:ucOtherPlayerHand Canvas.Left="269" Canvas.Top="72" x:Name="Player2" />
-            <cust:ucOtherPlayerHand Canvas.Left="466" Canvas.Top="6" Height="60" x:Name="ucOtherPlayerHand1" Width="175" />
-            <cust:ucOtherPlayerHand Canvas.Left="466" Canvas.Top="72" x:Name="ucOtherPlayerHand2" />
+            <cust:ucOtherPlayerHand Canvas.Left="269" Canvas.Top="6" x:Name="PlayerContainer1" Height="60" Width="175" />
+            <cust:ucOtherPlayerHand Canvas.Left="269" Canvas.Top="72" x:Name="PlayerContainer2" />
+            <cust:ucOtherPlayerHand Canvas.Left="466" Canvas.Top="6" Height="60" x:Name="PlayerContainer3" Width="175" />
+            <cust:ucOtherPlayerHand Canvas.Left="466" Canvas.Top="72" x:Name="PlayerContainer4" />
             <cust:MainUserHand Canvas.Left="240" Canvas.Top="186" x:Name="mainHand" />
             <Button Canvas.Left="274" Canvas.Top="377" Content="Stay" Height="23" Name="btnStay" Width="44" Click="btnStay_Click" />
             <Button Canvas.Left="324" Canvas.Top="377" Content="Hit" Height="23" Name="btnHit" Width="44" Click="btnHit_Click" />
@@ -27,7 +27,7 @@
             <Button Content="Ready" Height="23" Name="btnReady" Width="75" Click="btnReady_Click" Canvas.Left="529" Canvas.Top="396" />
             <Label Canvas.Left="269" Canvas.Top="406" Height="29" Name="lblPlayerName" Foreground="White" FontWeight="Bold" Width="116" />
             <Label Canvas.Left="540" Canvas.Top="191" Content="Bid:" Height="29" Name="label1" Foreground="White" FontWeight="Bold" />
-            <TextBox Canvas.Left="579" Canvas.Top="191" Height="23" Name="txtBid" Width="83" />
+            <TextBox Canvas.Left="579" Canvas.Top="191" Height="23" Name="txtBid" Width="83" IsEnabled="False" TextChanged="txtBid_TextChanged" />
             <Label Canvas.Left="540" Canvas.Top="233" Content="Bank:" FontWeight="Bold" Foreground="White" Height="29" Name="label2" />
             <TextBox Canvas.Left="579" Canvas.Top="237" Height="23" Name="txtBank" Width="83" IsEnabled="False" />
         </Canvas>
