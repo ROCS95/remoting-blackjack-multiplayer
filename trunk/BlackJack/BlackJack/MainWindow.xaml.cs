@@ -311,6 +311,10 @@ namespace BlackJack
             {
                 int cardNum = 0;
                 string pName = player.Name;
+                if (pName.Equals(txtJoin.Text))
+                {
+                    mainHand.lblCount.Content = player.State.CardTotal;
+                }
                 foreach (Card card in player.State.CardsInPlay)
                 {
                     if (pName.Equals(txtJoin.Text)) //main player
