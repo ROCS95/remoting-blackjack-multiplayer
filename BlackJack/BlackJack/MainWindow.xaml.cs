@@ -20,7 +20,7 @@ namespace BlackJack
     /// </summary>
     public partial class MainWindow : Window
     {
-        int plrCount = 0; 
+        int plrCount = 0;
         int dlrCount = 0;
         Card dlrSecondCard;
         bool isAce = false;
@@ -38,16 +38,20 @@ namespace BlackJack
             try
             {
                 // Load the remoting configuration file
-                RemotingConfiguration.Configure("BlackJackClient.exe.config", false);
+                RemotingConfiguration.Configure( "BlackJackClient.exe.config", false );
 
                 // Activate a game object
-                game = (Game)Activator.GetObject(typeof(Game), "tcp://localhost:12222/game.binary");
+
+                //game = ( Game )Activator.GetObject( typeof( Game ), "http://localhost:9999/game.binary" );
+
+                game = ( Game )Activator.GetObject( typeof( Game ), "tcp://localhost:12222/game.binary" );
+
             }
-            catch (Exception ex)
+            catch( Exception ex )
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show( ex.Message );
             }
-  
+
             btnReady.IsEnabled = false;
             btnHit.IsEnabled = false;
             btnStay.IsEnabled = false;
@@ -76,10 +80,11 @@ namespace BlackJack
             }
             else
             {
-                game.Join(txtJoin.Text, new Callback(this));
+                game.Join( txtJoin.Text, new Callback( this ) );
                 lblPlayerName.Content = txtJoin.Text;
+                txtBank.Text = Convert.ToString( game.currentPlayer.State.Bank );
                 txtJoin.IsEnabled = false;
-                btnReady.IsEnabled = true;
+                txtBid.IsEnabled = true;
             }
         }
 
@@ -92,7 +97,9 @@ namespace BlackJack
             mainHand.lblCount.Content = plrCount;
             DealerHand.lblDealerCount.Content = dlrCount;
 
-            game.Ready();
+            game.Ready( Convert.ToInt32( txtBid.Text ) );
+            mainHand.lblCount.Content = game.currentPlayer.State.CardTotal;
+            txtBank.Text = Convert.ToString( game.currentPlayer.State.Bank );
 
             //plrCount += card.Value + card2.Value;
 
@@ -154,6 +161,7 @@ namespace BlackJack
         private void btnHit_Click( object sender, RoutedEventArgs e )
         {
             game.Hit();
+            mainHand.lblCount.Content = game.currentPlayer.State.CardTotal;
             //plrCardHit( plrContainers );
         }
 
@@ -161,33 +169,8 @@ namespace BlackJack
         {
             btnHit.IsEnabled = false;
             btnStay.IsEnabled = false;
-
-            finishDealersHand();
             btnReady.IsEnabled = true;
-        }
-
-        void plrCardHit( List<ucCardContainer> containers )
-        {
-            ////check if card is ace
-            //if( card.Rank == Card.RankID.Ace )
-            //    isAce = true;
-            //if( plrCount > 21 )
-            //{
-            //    if( isAce )
-            //    {
-            //        plrCount -= 10;
-            //        isAce = false;
-            //    }
-            //    else
-            //    {
-            //        mainHand.lblCount.Content = plrCount;
-            //        MessageBox.Show( "You bust!" );
-            //        btnHit.IsEnabled = false;
-            //        btnStay.IsEnabled = false;
-            //        finishDealersHand();
-            //    }
-            //}
-            //mainHand.lblCount.Content = plrCount;
+            btnDoubleDown.IsEnabled = false;
         }
 
         void dlrCardHit( List<ucSmallCardContainer> containers )
@@ -262,6 +245,7 @@ namespace BlackJack
                     MessageBox.Show( "No Winner!" );
                 }
 
+                btnReady.IsEnabled = true;
             }
         }
 
@@ -284,7 +268,7 @@ namespace BlackJack
 
         private void btnDoubleDown_Click( object sender, RoutedEventArgs e )
         {
-            plrCardHit( playerContainers );
+            //plrCardHit( playerContainers );
             btnHit.IsEnabled = false;
             btnStay.IsEnabled = false;
             btnDoubleDown.IsEnabled = false;
@@ -293,45 +277,53 @@ namespace BlackJack
 
         }
 
-        private delegate void ClientUpdateDelegate(Dictionary<String, Player> players);
+        private delegate void ClientUpdateDelegate( Dictionary<String, Player> players );
 
-        public void UpdateClientWindow(Dictionary<String, Player> players)
+        public void UpdateClientWindow( Dictionary<String, Player> players )
         {
-            txtJoin.Dispatcher.BeginInvoke(new ClientUpdateDelegate(updateClientWindow), players);
+            txtJoin.Dispatcher.BeginInvoke( new ClientUpdateDelegate( updateClientWindow ), players );
         }
 
-        private void updateClientWindow(Dictionary<String, Player> players)
+        private void updateClientWindow( Dictionary<String, Player> players )
         {
-            
             //clear hand
             clearCards();
 
             //update players' hand
-            foreach (Player player in players.Values)
+            foreach( Player player in players.Values )
             {
                 int cardNum = 0;
                 string pName = player.Name;
-                if (pName.Equals(txtJoin.Text))
+
+                if( pName.Equals( txtJoin.Text ) )
                 {
                     mainHand.lblCount.Content = player.State.CardTotal;
                 }
-                foreach (Card card in player.State.CardsInPlay)
+
+                foreach( Card card in player.State.CardsInPlay )
                 {
-                    if (pName.Equals(txtJoin.Text)) //main player
+                    if( pName.Equals( txtJoin.Text ) ) //main player
                     {
-                        playerContainers[cardNum++].SetCard(card);
+                        playerContainers[cardNum++].SetCard( card );
                     }
-                    else if (pName.Equals("Dealer")) //dealer
+                    else if( pName.Equals( "Dealer" ) ) //dealer
                     {
-                        dealerContainers[cardNum++].SetCard(card, cardNum == 1);
+                        dealerContainers[cardNum++].SetCard( card, cardNum == 1 );
                     }
-                    else //all other players on screen
+                    else //other players on screen
                     {
-                        //update other containers
+
                     }
                 }
             }
-            
+
+        }
+
+        private void txtBid_TextChanged( object sender, TextChangedEventArgs e )
+        {
+            int bet;
+            if( int.TryParse( txtBid.Text, out bet ) )
+                btnReady.IsEnabled = true;
         }
     }
 }
