@@ -6,11 +6,11 @@
              mc:Ignorable="d" 
              d:DesignHeight="66" d:DesignWidth="177" xmlns:my="clr-namespace:BlackJack">
     <Grid>
-        <my:ucSmallCardContainer HorizontalAlignment="Left" Margin="106,12,0,0" x:Name="Card1" VerticalAlignment="Top" />
-        <my:ucSmallCardContainer HorizontalAlignment="Left" Margin="113,12,0,0" x:Name="Card2" VerticalAlignment="Top" />
-        <my:ucSmallCardContainer HorizontalAlignment="Left" Margin="120,12,0,0" x:Name="CArd3" VerticalAlignment="Top" />
-        <my:ucSmallCardContainer HorizontalAlignment="Left" Margin="128,12,0,0" x:Name="Card4" VerticalAlignment="Top" />
-        <my:ucSmallCardContainer HorizontalAlignment="Left" Margin="135,12,0,0" x:Name="Card5" VerticalAlignment="Top" />
+        <my:ucSmallCardContainer HorizontalAlignment="Left" Margin="106,12,0,0" x:Name="card1" VerticalAlignment="Top" />
+        <my:ucSmallCardContainer HorizontalAlignment="Left" Margin="113,12,0,0" x:Name="card2" VerticalAlignment="Top" />
+        <my:ucSmallCardContainer HorizontalAlignment="Left" Margin="120,12,0,0" x:Name="card3" VerticalAlignment="Top" />
+        <my:ucSmallCardContainer HorizontalAlignment="Left" Margin="128,12,0,0" x:Name="card4" VerticalAlignment="Top" />
+        <my:ucSmallCardContainer HorizontalAlignment="Left" Margin="135,12,0,0" x:Name="card5" VerticalAlignment="Top" />
         <Label Content="Name" Height="28" HorizontalAlignment="Left" Name="lblPlrName" VerticalAlignment="Top" Foreground="White" />
         <Label Content="Bid:" Height="28" HorizontalAlignment="Left" Margin="0,19,0,0" Name="label1" VerticalAlignment="Top" Foreground="White" />
         <Label Content="Bank:" Height="28" HorizontalAlignment="Left" Margin="0,35,0,0" Name="label2" VerticalAlignment="Top" Foreground="White" />

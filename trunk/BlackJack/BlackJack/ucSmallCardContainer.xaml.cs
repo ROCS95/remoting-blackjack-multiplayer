@@ -29,12 +29,12 @@ namespace BlackJack
             InitializeComponent();
         }
 
-        public void SetCard( Card card, bool isSecondCard )
+        public void SetCard( Card card, bool isFaceDown = false )
         {
             ImageBrush brush = new ImageBrush();
             BitmapImage cardIm = new BitmapImage();
 
-            if( isSecondCard )
+            if( isFaceDown )
             {
                 cardIm.BeginInit();   
                 cardIm.StreamSource = Assembly.GetExecutingAssembly().GetManifestResourceStream( "BlackJackClient.img." + "b2fv.png" );
