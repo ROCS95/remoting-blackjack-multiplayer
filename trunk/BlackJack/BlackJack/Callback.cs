@@ -15,9 +15,9 @@ namespace BlackJack
             wnd = w;
         }
 
-        public void PlayerUpdate(PlayerState info)
+        public void PlayerUpdate(PlayerState pUpdate)
         {
-            wnd.UpdateClientWindow(info);
+            wnd.UpdateClientWindow(pUpdate);
         }
     }
 }

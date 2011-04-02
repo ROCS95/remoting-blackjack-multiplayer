@@ -24,13 +24,16 @@ namespace BlackJack
     public partial class ucCardContainer : UserControl
     {
         private bool isSet_;
+        public delegate void SetCardDelegate( Card card );
+        public SetCardDelegate SetCard;
         public ucCardContainer()
         {
             InitializeComponent();
+            SetCard = new SetCardDelegate(setCard);
 
         }  
 
-        public void SetCard( Card card ) {
+        public void setCard( Card card ) {
             string tvSuit = card.Suit.ToString().Substring(0, 1).ToLower();
             string tvRank = "";
             switch (card.Rank)
