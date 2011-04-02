@@ -8,7 +8,7 @@ namespace BlackJackLibrary
     public class Game : MarshalByRefObject
     {
         private Shoe shoe = new Shoe( 3 );
-        private Dictionary<String, Player> players = new Dictionary<String, Player>();
+        private List<Player> players = new List<Player>();
         private Dictionary<String, ICallback> callbacks = new Dictionary<String, ICallback>();
         private Player currentPlayer = null;
         public ICallback CallBack = null;
@@ -18,7 +18,7 @@ namespace BlackJackLibrary
             try
             {
                 Player newPlayer = new Player( name );
-                players.Add( newPlayer.Name, newPlayer );
+                players.Add( newPlayer );
                 callbacks.Add( name, callback );
 
                 //initial join, start play between dealer and player 1
@@ -40,7 +40,7 @@ namespace BlackJackLibrary
 
         private void startGame()
         {
-            players.Add( "Dealer", new Player( "Dealer" ) );
+            players.Add( new Player( "Dealer" ) );
             dealDealerCards(2);
         }
 
@@ -59,28 +59,34 @@ namespace BlackJackLibrary
 
         public Player getPlayer( string id )
         {
-            return players[id];
+            foreach( Player player in players )
+            {
+                if ( id.Equals( player.Name ) )
+                    return player;
+            }
+            return new Player( null );
         }
 
         private void dealDealerCards( int nCards )
         {
-            players["Dealer"].State.CardsInPlay.AddRange( drawMultiple( nCards ) );
+            Player dealer = getPlayer( "Dealer" );
+            dealer.State.CardsInPlay.AddRange( drawMultiple( nCards ) );
             //reset count
-            players["Dealer"].State.CardTotal = 0;
+            dealer.State.CardTotal = 0;
             //get count of current cards
-            foreach( Card card in players["Dealer"].State.CardsInPlay )
+            foreach( Card card in dealer.State.CardsInPlay )
             {
                 //check if card is ace
-                players["Dealer"].State.CardTotal += card.Value;
+                dealer.State.CardTotal += card.Value;
 
                 if( card.Rank == Card.RankID.Ace )
-                    players["Dealer"].State.AceCount++;
-                if( players["Dealer"].State.CardTotal > 21 && players["Dealer"].State.AceCount > 0 )
+                    dealer.State.AceCount++;
+                if( dealer.State.CardTotal > 21 && dealer.State.AceCount > 0 )
                 {
-                    players["Dealer"].State.CardTotal -= 10;
-                    players["Dealer"].State.AceCount--;
+                    dealer.State.CardTotal -= 10;
+                    dealer.State.AceCount--;
                 }
-                else if( players["Dealer"].State.CardTotal == 21 )
+                else if( dealer.State.CardTotal == 21 )
                 {
                     //end current hand
 
@@ -145,9 +151,9 @@ namespace BlackJackLibrary
 
         private void updateAllClients()
         {
-            foreach( String key in players.Keys )
-                if( !key.Equals( "Dealer" ) )
-                    callbacks[key].PlayerUpdate( players );
+            foreach( Player player in players )
+                if( !player.Name.Equals( "Dealer" ) )
+                    callbacks[ player.Name ].PlayerUpdate( players );
         }
 
     }
