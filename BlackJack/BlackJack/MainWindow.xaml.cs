@@ -25,16 +25,11 @@ namespace BlackJack
         Card dlrSecondCard;
         bool isAce = false;
 
-        List<ucSmallCardContainer> dlrContainers = new List<ucSmallCardContainer>();
-        List<ucCardContainer> plrContainers = new List<ucCardContainer>();
+        List<ucSmallCardContainer> dealerContainers = new List<ucSmallCardContainer>();
+        List<ucCardContainer> playerContainers = new List<ucCardContainer>();
 
-        private Shoe shoe;
-
-        // Create a reference to a hangman Game object
+        // Create a reference to a blackjack Game object
         private Game game;
-
-        public delegate void UpdateWindowDelegate(PlayerState state);
-        public UpdateWindowDelegate updateDelegate;
 
         public MainWindow()
         {
@@ -58,17 +53,17 @@ namespace BlackJack
             btnStay.IsEnabled = false;
 
             //add card containers to list
-            plrContainers.Add( mainHand.card1 );
-            plrContainers.Add( mainHand.card2 );
-            plrContainers.Add( mainHand.card3 );
-            plrContainers.Add( mainHand.card4 );
-            plrContainers.Add( mainHand.card5 );
+            playerContainers.Add( mainHand.card1 );
+            playerContainers.Add( mainHand.card2 );
+            playerContainers.Add( mainHand.card3 );
+            playerContainers.Add( mainHand.card4 );
+            playerContainers.Add( mainHand.card5 );
 
-            dlrContainers.Add( DealerHand.cDlrCrd1 );
-            dlrContainers.Add( DealerHand.cDlrCrd2 );
-            dlrContainers.Add( DealerHand.cDlrCrd3 );
-            dlrContainers.Add( DealerHand.cDlrCrd4 );
-            dlrContainers.Add( DealerHand.cDlrCrd5 );
+            dealerContainers.Add( DealerHand.cDlrCrd1 );
+            dealerContainers.Add( DealerHand.cDlrCrd2 );
+            dealerContainers.Add( DealerHand.cDlrCrd3 );
+            dealerContainers.Add( DealerHand.cDlrCrd4 );
+            dealerContainers.Add( DealerHand.cDlrCrd5 );
 
         }
 
@@ -85,8 +80,6 @@ namespace BlackJack
                 lblPlayerName.Content = txtJoin.Text;
                 txtJoin.IsEnabled = false;
                 btnReady.IsEnabled = true;
-                shoe = new Shoe( 3 );
-                txtBank.Text = "500";
             }
         }
 
@@ -99,49 +92,46 @@ namespace BlackJack
             mainHand.lblCount.Content = plrCount;
             DealerHand.lblDealerCount.Content = dlrCount;
 
-            Card card = shoe.Draw();
-            mainHand.card1.SetCard( card );
-            Card card2 = shoe.Draw();
-            mainHand.card2.SetCard( card2 );
+            game.Ready();
 
-            plrCount += card.Value + card2.Value;
+            //plrCount += card.Value + card2.Value;
 
-            //set dealers hand
-            Card dlrCard = shoe.Draw();
-            DealerHand.cDlrCrd1.SetCard( dlrCard, false );
-            dlrSecondCard = shoe.Draw();
-            DealerHand.cDlrCrd2.SetCard( dlrSecondCard, true );
-            DealerHand.lblDealer.Visibility = Visibility.Visible;
+            ////set dealers hand
+            //Card dlrCard = shoe.Draw();
+            //DealerHand.cDlrCrd1.SetCard( dlrCard, false );
+            //dlrSecondCard = shoe.Draw();
+            //DealerHand.cDlrCrd2.SetCard( dlrSecondCard, true );
+            //DealerHand.lblDealer.Visibility = Visibility.Visible;
 
-            dlrCount = dlrCard.Value;
-            DealerHand.lblDealerCount.Content = dlrCount;
+            //dlrCount = dlrCard.Value;
+            //DealerHand.lblDealerCount.Content = dlrCount;
 
-            //check if card is ace
-            if( card.Rank == Card.RankID.Ace )
-                isAce = true;
-            if( plrCount > 21 && isAce )
-            {
-                plrCount -= 10;
-                isAce = false;
-            }
-            else if( plrCount == 21 )
-            {
-                MessageBox.Show( "Blackjack!" );
-                btnReady.IsEnabled = true;
-                btnHit.IsEnabled = false;
-                btnStay.IsEnabled = false;
-
-                finishDealersHand();
-            }
-
-            //if( card.Value == card2.Value && card.Rank == card2.Rank )
+            ////check if card is ace
+            //if( card.Rank == Card.RankID.Ace )
+            //    isAce = true;
+            //if( plrCount > 21 && isAce )
             //{
-            //    btnSplit.IsEnabled = true;
+            //    plrCount -= 10;
+            //    isAce = false;
+            //}
+            //else if( plrCount == 21 )
+            //{
+            //    MessageBox.Show( "Blackjack!" );
+            //    btnReady.IsEnabled = true;
+            //    btnHit.IsEnabled = false;
+            //    btnStay.IsEnabled = false;
+
+            //    finishDealersHand();
             //}
 
-            //btnSplit.IsEnabled = true;
+            ////if( card.Value == card2.Value && card.Rank == card2.Rank )
+            ////{
+            ////    btnSplit.IsEnabled = true;
+            ////}
 
-            mainHand.lblCount.Content = plrCount;
+            ////btnSplit.IsEnabled = true;
+
+            //mainHand.lblCount.Content = plrCount;
             btnReady.IsEnabled = false;
             btnHit.IsEnabled = true;
             btnStay.IsEnabled = true;
@@ -150,12 +140,12 @@ namespace BlackJack
 
         private void clearCards()
         {
-            foreach( ucCardContainer uc in plrContainers )
+            foreach( ucCardContainer uc in playerContainers )
             {
                 uc.Clear();
             }
 
-            foreach( ucSmallCardContainer uc in dlrContainers )
+            foreach( ucSmallCardContainer uc in dealerContainers )
             {
                 uc.Clear();
             }
@@ -178,74 +168,61 @@ namespace BlackJack
 
         void plrCardHit( List<ucCardContainer> containers )
         {
-            Card card = shoe.Draw();
-            plrCount += card.Value;
-
-            //check which container to put card in
-            foreach( ucCardContainer uc in containers )
-            {
-                if( !uc.IsSet )
-                {
-                    uc.SetCard( card );
-                    break;
-                }
-            }
-
-            //check if card is ace
-            if( card.Rank == Card.RankID.Ace )
-                isAce = true;
-            if( plrCount > 21 )
-            {
-                if( isAce )
-                {
-                    plrCount -= 10;
-                    isAce = false;
-                }
-                else
-                {
-                    mainHand.lblCount.Content = plrCount;
-                    MessageBox.Show( "You bust!" );
-                    btnHit.IsEnabled = false;
-                    btnStay.IsEnabled = false;
-                    finishDealersHand();
-                }
-            }
-            mainHand.lblCount.Content = plrCount;
+            ////check if card is ace
+            //if( card.Rank == Card.RankID.Ace )
+            //    isAce = true;
+            //if( plrCount > 21 )
+            //{
+            //    if( isAce )
+            //    {
+            //        plrCount -= 10;
+            //        isAce = false;
+            //    }
+            //    else
+            //    {
+            //        mainHand.lblCount.Content = plrCount;
+            //        MessageBox.Show( "You bust!" );
+            //        btnHit.IsEnabled = false;
+            //        btnStay.IsEnabled = false;
+            //        finishDealersHand();
+            //    }
+            //}
+            //mainHand.lblCount.Content = plrCount;
         }
 
         void dlrCardHit( List<ucSmallCardContainer> containers )
         {
-            Card card = shoe.Draw();
-            dlrCount += card.Value;
+            //Card card = shoe.Draw();
+            //dlrCount += card.Value;
 
-            //check which container to put card in
-            foreach( ucSmallCardContainer uc in containers )
-            {
-                if( !uc.IsSet )
-                {
-                    uc.SetCard( card, false );
-                    break;
-                }
-            }
+            ////check which container to put card in
+            //foreach( ucSmallCardContainer uc in containers )
+            //{
+            //    if( !uc.IsSet )
+            //    {
+            //        uc.SetCard( card, false );
+            //        break;
+            //    }
+            //}
 
-            //check if card is ace
-            if( card.Rank == Card.RankID.Ace )
-                isAce = true;
-            if( dlrCount > 21 )
-            {
-                if( isAce )
-                {
-                    dlrCount -= 10;
-                    DealerHand.lblDealerCount.Content = dlrCount;
-                    isAce = false;
-                }
-                else
-                {
-                    DealerHand.lblDealerCount.Content = dlrCount;
-                    MessageBox.Show( "Dealer busts!" );
-                }
-            }
-            DealerHand.lblDealerCount.Content = dlrCount;
+            ////check if card is ace
+            //if( card.Rank == Card.RankID.Ace )
+            //    isAce = true;
+            //if( dlrCount > 21 )
+            //{
+            //    if( isAce )
+            //    {
+            //        dlrCount -= 10;
+            //        DealerHand.lblDealerCount.Content = dlrCount;
+            //        isAce = false;
+            //    }
+            //    else
+            //    {
+            //        DealerHand.lblDealerCount.Content = dlrCount;
+            //        MessageBox.Show( "Dealer busts!" );
+            //    }
+            //}
+            //DealerHand.lblDealerCount.Content = dlrCount;
         }
 
         void finishDealersHand()
@@ -256,7 +233,7 @@ namespace BlackJack
 
             if( dlrCount < 17 )
             {
-                dlrCardHit( dlrContainers );
+                dlrCardHit( dealerContainers );
                 finishDealersHand();
             }
             else
@@ -307,7 +284,7 @@ namespace BlackJack
 
         private void btnDoubleDown_Click( object sender, RoutedEventArgs e )
         {
-            plrCardHit( plrContainers );
+            plrCardHit( playerContainers );
             btnHit.IsEnabled = false;
             btnStay.IsEnabled = false;
             btnDoubleDown.IsEnabled = false;
@@ -322,18 +299,32 @@ namespace BlackJack
         {
             txtJoin.Dispatcher.BeginInvoke(new ClientUpdateDelegate(updateClientWindow), players);
         }
+
         private void updateClientWindow(Dictionary<String, Player> players)
         {
-            //update player's hand
-            foreach( Card card in players[ txtJoin.Text ].State.CardsInPlay )
+            //container card number
+            int cardNum = 0;
+
+            //clear hand
+            clearCards();
+
+            //update players' hand
+            foreach (Player player in players.Values)
             {
-                //check which container to put card in
-                foreach (ucCardContainer uc in plrContainers)
+                string pName = player.Name;
+                foreach (Card card in player.State.CardsInPlay)
                 {
-                    if (!uc.IsSet)
+                    if (pName.Equals(txtJoin.Text)) //main player
                     {
-                        uc.SetCard(card);
-                        break;
+                        playerContainers[cardNum++].SetCard(card);
+                    }
+                    else if (pName.Equals("Dealer")) //dealer
+                    {
+                        dealerContainers[cardNum++].SetCard(card, cardNum == 1);
+                    }
+                    else //other players on screen
+                    {
+
                     }
                 }
             }

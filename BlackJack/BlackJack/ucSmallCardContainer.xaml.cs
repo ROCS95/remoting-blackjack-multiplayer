@@ -62,8 +62,6 @@ namespace BlackJack
                 cardIm.BeginInit();
                 cardIm.StreamSource = Assembly.GetExecutingAssembly().GetManifestResourceStream( "BlackJackClient.img." + tvSuit + tvRank + ".png" );
                 cardIm.EndInit();
-
-
             }
             brush.ImageSource = cardIm;
 
