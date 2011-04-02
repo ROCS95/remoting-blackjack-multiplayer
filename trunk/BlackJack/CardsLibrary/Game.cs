@@ -10,6 +10,7 @@ namespace BlackJackLibrary
         private Shoe shoe = new Shoe( 3 );
         private Dictionary<String, Player>      players     = new Dictionary<String, Player>();
         private Dictionary<String, ICallback>   callbacks   = new Dictionary<String, ICallback>();
+        private Player currentPlayer = null;
         public ICallback CallBack = null;
 
         public void Join(string name, ICallback callback)
@@ -20,7 +21,13 @@ namespace BlackJackLibrary
                 players.Add(newPlayer.Name, newPlayer);
                 callbacks.Add(name, callback);
 
-                Console.WriteLine("Player: " + newPlayer.Name + " has just joined the game!");
+                //initial join, start play between dealer and player 1
+                if (players.Count == 1)
+                {
+                    currentPlayer = newPlayer;
+                } //else wait for current players turn to be over
+
+                Console.WriteLine("Player: {0} has just joined the game!", newPlayer.Name);
 
                 updateAllClients();
             }
@@ -32,13 +39,13 @@ namespace BlackJackLibrary
 
         public void Hit()
         {
-            players["Jer"].State.CardsInPlay.Add(shoe.Draw());
+            currentPlayer.State.CardsInPlay.Add(shoe.Draw());
             updateAllClients();
         }
 
         public void Ready()
         {
-            players["Jer"].State.CardsInPlay.AddRange(drawMultiple(2));
+            currentPlayer.State.CardsInPlay.AddRange(drawMultiple(2));
             updateAllClients();
         }
 
