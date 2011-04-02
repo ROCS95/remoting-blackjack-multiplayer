@@ -10,9 +10,9 @@ namespace BlackJackLibrary
         private Shoe shoe = new Shoe( 3 );
         private Dictionary<String, Player> players = new Dictionary<String, Player>();
         private Dictionary<String, ICallback> callbacks = new Dictionary<String, ICallback>();
-        public Player currentPlayer = null;
+        private Player currentPlayer = null;
         public ICallback CallBack = null;
-
+        public int PlayerNum;
         public void Join( string name, ICallback callback )
         {
             try
@@ -41,7 +41,7 @@ namespace BlackJackLibrary
         private void startGame()
         {
             players.Add( "Dealer", new Player( "Dealer" ) );
-            players["Dealer"].State.CardsInPlay.AddRange( drawMultiple( 2 ) );
+            dealDealerCards(2);
         }
 
         public void Hit()
@@ -50,12 +50,51 @@ namespace BlackJackLibrary
             updateAllClients();
         }
 
-        public void Ready( int bet )
+        public void Ready( int bet, string name )
         {
+            currentPlayer = getPlayer( name );
             dealCards( 2 );
             updateAllClients();
         }
 
+        public Player getPlayer( string id )
+        {
+            return players[id];
+        }
+
+        private void dealDealerCards( int nCards )
+        {
+            players["Dealer"].State.CardsInPlay.AddRange( drawMultiple( nCards ) );
+            //reset count
+            players["Dealer"].State.CardTotal = 0;
+            //get count of current cards
+            foreach( Card card in players["Dealer"].State.CardsInPlay )
+            {
+                //check if card is ace
+                players["Dealer"].State.CardTotal += card.Value;
+
+                if( card.Rank == Card.RankID.Ace )
+                    players["Dealer"].State.AceCount++;
+                if( players["Dealer"].State.CardTotal > 21 && players["Dealer"].State.AceCount > 0 )
+                {
+                    players["Dealer"].State.CardTotal -= 10;
+                    players["Dealer"].State.AceCount--;
+                }
+                else if( players["Dealer"].State.CardTotal == 21 )
+                {
+                    //end current hand
+
+                    //award wager amount * 3
+
+                    //move to next player
+
+                    //if no more players
+
+                    //finishDealersHand();
+                }
+            }
+
+        }
         private void dealCards( int nCards )
         {
             currentPlayer.State.CardsInPlay.AddRange( drawMultiple( nCards ) );
@@ -91,7 +130,7 @@ namespace BlackJackLibrary
 
         public void Stay()
         {
-            currentPlayer.State.Status = StatusType.Stay;
+            currentPlayer.State.Status = StatusType.Done;
         }
 
         // Helper methods
