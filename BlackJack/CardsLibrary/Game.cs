@@ -13,6 +13,7 @@ namespace BlackJackLibrary
         private Player currentPlayer = null;
         public ICallback CallBack = null;
         public int PlayerNum;
+
         public void Join( string name, ICallback callback )
         {
             try
