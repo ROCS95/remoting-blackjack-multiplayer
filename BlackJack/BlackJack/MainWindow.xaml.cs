@@ -39,7 +39,6 @@ namespace BlackJack
         public MainWindow()
         {
             InitializeComponent();
-            updateDelegate = new UpdateWindowDelegate(UpdateClientWindow);
 
             try
             {
@@ -82,8 +81,7 @@ namespace BlackJack
             }
             else
             {
-                PlayerState state = game.Join(txtJoin.Text, new Callback(this));
-                UpdateClientWindow(state);
+                game.Join(txtJoin.Text, new Callback(this));
                 lblPlayerName.Content = txtJoin.Text;
                 txtJoin.IsEnabled = false;
                 btnReady.IsEnabled = true;
@@ -318,16 +316,16 @@ namespace BlackJack
 
         }
 
-        private delegate void ClientUpdateDelegate(PlayerState pState);
+        private delegate void ClientUpdateDelegate(Dictionary<String, Player> players);
 
-        public void UpdateClientWindow(PlayerState pState)
+        public void UpdateClientWindow(Dictionary<String, Player> players)
         {
-            txtJoin.Dispatcher.BeginInvoke(new ClientUpdateDelegate(updateClientWindow), pState);
+            txtJoin.Dispatcher.BeginInvoke(new ClientUpdateDelegate(updateClientWindow), players);
         }
-        private void updateClientWindow(PlayerState state)
+        private void updateClientWindow(Dictionary<String, Player> players)
         {
             //update player's hand
-            foreach( Card card in state.CardsInPlay["Jer"] )
+            foreach( Card card in players[ txtJoin.Text ].State.CardsInPlay )
             {
                 //check which container to put card in
                 foreach (ucCardContainer uc in plrContainers)
