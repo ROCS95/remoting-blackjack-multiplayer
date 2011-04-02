@@ -5,7 +5,7 @@ using System.Text;
 
 namespace BlackJackLibrary
 {
-    public enum StatusType { Betting, Ready, Playing, Stay };
+    public enum StatusType { Betting, Ready, Playing, Done };
 
     [Serializable]
     public class PlayerState
