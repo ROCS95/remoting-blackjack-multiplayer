@@ -43,6 +43,7 @@
     <Compile Include="Card.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="ICallback.cs" />
+    <Compile Include="Player.cs" />
     <Compile Include="PlayerState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RandomList.cs" />
