@@ -25,6 +25,7 @@ namespace BlackJackLibrary
                 if (players.Count == 1)
                 {
                     currentPlayer = newPlayer;
+                    startGame();
                 } //else wait for current players turn to be over
 
                 Console.WriteLine("Player: {0} has just joined the game!", newPlayer.Name);
@@ -35,6 +36,12 @@ namespace BlackJackLibrary
             {
                 
             }
+        }
+
+        private void startGame()
+        {
+            players.Add("Dealer", new Player( "Dealer" ));
+            players["Dealer"].State.CardsInPlay.AddRange(drawMultiple(2));
         }
 
         public void Hit()
@@ -62,7 +69,8 @@ namespace BlackJackLibrary
         private void updateAllClients()
         {
             foreach (String key in players.Keys)
-                callbacks[key].PlayerUpdate(players);
+                if( !key.Equals("Dealer") )
+                    callbacks[key].PlayerUpdate(players);
         }
 
     }
