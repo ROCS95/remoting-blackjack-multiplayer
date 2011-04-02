@@ -46,14 +46,47 @@ namespace BlackJackLibrary
 
         public void Hit()
         {
-            currentPlayer.State.CardsInPlay.Add(shoe.Draw());
+            dealCards(1);
             updateAllClients();
         }
 
         public void Ready()
         {
-            currentPlayer.State.CardsInPlay.AddRange(drawMultiple(2));
+            dealCards(2);
             updateAllClients();
+        }
+
+        private void dealCards(int nCards)
+        {
+            currentPlayer.State.CardsInPlay.AddRange(drawMultiple(nCards));
+            //reset count
+            currentPlayer.State.CardTotal = 0;
+            //get count of current cards
+            foreach (Card card in currentPlayer.State.CardsInPlay)
+            {
+                //check if card is ace
+                currentPlayer.State.CardTotal += card.Value;
+
+                if (card.Rank == Card.RankID.Ace)
+                    currentPlayer.State.AceCount++;
+                if (currentPlayer.State.CardTotal > 21 && currentPlayer.State.AceCount > 0)
+                {
+                    currentPlayer.State.CardTotal -= 10;
+                    currentPlayer.State.AceCount--;
+                }
+                else if (currentPlayer.State.CardTotal == 21)
+                {
+                    //end current hand
+
+                    //award wager amount * 3
+
+                    //move to next player
+
+                    //if no more players
+
+                    //finishDealersHand();
+                }
+            }
         }
 
         // Helper methods
