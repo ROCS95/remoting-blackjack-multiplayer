@@ -27,6 +27,8 @@ namespace BlackJack
 
         List<ucSmallCardContainer> dealerContainers = new List<ucSmallCardContainer>();
         List<ucCardContainer> playerContainers = new List<ucCardContainer>();
+
+        List<List<ucSmallCardContainer>> otherPlayerHands = new List<List<ucSmallCardContainer>>();
         List<ucSmallCardContainer> playerContainers1 = new List<ucSmallCardContainer>();
         List<ucSmallCardContainer> playerContainers2 = new List<ucSmallCardContainer>();
         List<ucSmallCardContainer> playerContainers3 = new List<ucSmallCardContainer>();
@@ -80,6 +82,31 @@ namespace BlackJack
             playerContainers1.Add( PlayerContainer1.CArd3 );
             playerContainers1.Add( PlayerContainer1.Card4 );
             playerContainers1.Add( PlayerContainer1.Card5 );
+
+            playerContainers2.Add( PlayerContainer2.Card1 );
+            playerContainers2.Add( PlayerContainer2.Card2 );
+            playerContainers2.Add( PlayerContainer2.CArd3 );
+            playerContainers2.Add( PlayerContainer2.Card4 );
+            playerContainers2.Add( PlayerContainer2.Card5 );
+
+            playerContainers3.Add( PlayerContainer3.Card1 );
+            playerContainers3.Add( PlayerContainer3.Card2 );
+            playerContainers3.Add( PlayerContainer3.CArd3 );
+            playerContainers3.Add( PlayerContainer3.Card4 );
+            playerContainers3.Add( PlayerContainer3.Card5 );
+
+            playerContainers4.Add( PlayerContainer4.Card1 );
+            playerContainers4.Add( PlayerContainer4.Card2 );
+            playerContainers4.Add( PlayerContainer4.CArd3 );
+            playerContainers4.Add( PlayerContainer4.Card4 );
+            playerContainers4.Add( PlayerContainer4.Card5 );
+
+
+            //add other player hands to list
+            otherPlayerHands.Add( playerContainers1 );
+            otherPlayerHands.Add( playerContainers2 );
+            otherPlayerHands.Add( playerContainers3 );
+            otherPlayerHands.Add( playerContainers4 );
 
         }
 
@@ -289,29 +316,32 @@ namespace BlackJack
 
         }
 
-        private delegate void ClientUpdateDelegate( Dictionary<String, Player> players );
+        private delegate void ClientUpdateDelegate( List<Player> players );
 
-        public void UpdateClientWindow( Dictionary<String, Player> players )
+        public void UpdateClientWindow( List<Player> players )
         {
             txtJoin.Dispatcher.BeginInvoke( new ClientUpdateDelegate( updateClientWindow ), players );
         }
 
-        private void updateClientWindow( Dictionary<String, Player> players )
+        private void updateClientWindow( List<Player> players )
         {
             //clear hand
             clearCards();
 
             //update players' hand
-            foreach( Player player in players.Values )
+            int otherPlayerIndex = 0;
+            foreach( Player player in players )
             {
                 int cardNum = 0;
                 string pName = player.Name;
+
+                if( !pName.Equals( txtJoin.Text ) && !pName.Equals( "Dealer" ) )
+                    otherPlayerIndex++;
 
                 if( pName.Equals( txtJoin.Text ) )
                 {
                     mainHand.lblCount.Content = player.State.CardTotal;
                 }
-
                 foreach( Card card in player.State.CardsInPlay )
                 {
                     if( pName.Equals( txtJoin.Text ) ) //main player
@@ -324,8 +354,7 @@ namespace BlackJack
                     }
                     else //other players on screen
                     {
-                        playerContainers1[cardNum++].SetCard( card, false );
-
+                        otherPlayerHands[otherPlayerIndex-1][cardNum++].SetCard( card, false );
                     }
                 }
             }
