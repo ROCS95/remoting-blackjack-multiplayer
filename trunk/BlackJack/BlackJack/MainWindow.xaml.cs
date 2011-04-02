@@ -302,15 +302,14 @@ namespace BlackJack
 
         private void updateClientWindow(Dictionary<String, Player> players)
         {
-            //container card number
-            int cardNum = 0;
-
+            
             //clear hand
             clearCards();
 
             //update players' hand
             foreach (Player player in players.Values)
             {
+                int cardNum = 0;
                 string pName = player.Name;
                 foreach (Card card in player.State.CardsInPlay)
                 {
@@ -322,9 +321,9 @@ namespace BlackJack
                     {
                         dealerContainers[cardNum++].SetCard(card, cardNum == 1);
                     }
-                    else //other players on screen
+                    else //all other players on screen
                     {
-
+                        //update other containers
                     }
                 }
             }
