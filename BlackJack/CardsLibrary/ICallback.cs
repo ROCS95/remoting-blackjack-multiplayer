@@ -7,5 +7,6 @@ namespace BlackJackLibrary
 {
     public interface ICallback
     {
+        void PlayerUpdate(PlayerState pUpdate);
     }
 }
