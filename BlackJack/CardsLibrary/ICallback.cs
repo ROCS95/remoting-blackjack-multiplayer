@@ -7,6 +7,6 @@ namespace BlackJackLibrary
 {
     public interface ICallback
     {
-        void PlayerUpdate(PlayerState pUpdate);
+        void PlayerUpdate(Dictionary<String, Player> players);
     }
 }

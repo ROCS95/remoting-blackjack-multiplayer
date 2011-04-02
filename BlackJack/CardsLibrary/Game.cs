@@ -8,34 +8,37 @@ namespace BlackJackLibrary
     public class Game : MarshalByRefObject
     {
         private Shoe shoe = new Shoe( 3 );
-        private PlayerState pState = new PlayerState();
-        private Dictionary<String, ICallback> clientCallbacks = new Dictionary<string, ICallback>();
+        private Dictionary<String, Player>      players     = new Dictionary<String, Player>();
+        private Dictionary<String, ICallback>   callbacks   = new Dictionary<String, ICallback>();
+        public ICallback CallBack = null;
 
-        public PlayerState Join(string name, ICallback callback)
+        public void Join(string name, ICallback callback)
         {
             try
             {
-                clientCallbacks.Add(name, callback);
-                Console.WriteLine("Player: " + name + " has just joined the game!");
-                pState.CardsInPlay.Add(name, new List<Card>());
-                //updateAllClients();
-                return pState;
+                Player newPlayer = new Player(name);
+                players.Add(newPlayer.Name, newPlayer);
+                callbacks.Add(name, callback);
+
+                Console.WriteLine("Player: " + newPlayer.Name + " has just joined the game!");
+
+                updateAllClients();
             }
             catch (Exception)
             {
-                return null;
+                
             }
         }
 
         public void Hit()
         {
-            pState.CardsInPlay["Jer"].Add(shoe.Draw());
+            players["Jer"].State.CardsInPlay.Add(shoe.Draw());
             updateAllClients();
         }
 
         public void Ready()
         {
-            pState.CardsInPlay["Jer"].AddRange(drawMultiple(2));
+            players["Jer"].State.CardsInPlay.AddRange(drawMultiple(2));
             updateAllClients();
         }
 
@@ -51,8 +54,8 @@ namespace BlackJackLibrary
 
         private void updateAllClients()
         {
-            foreach (ICallback callback in clientCallbacks.Values)
-                callback.PlayerUpdate(pState);
+            foreach (String key in players.Keys)
+                callbacks[key].PlayerUpdate(players);
         }
 
     }
