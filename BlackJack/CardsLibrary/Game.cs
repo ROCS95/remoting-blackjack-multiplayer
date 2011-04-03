@@ -10,8 +10,9 @@ namespace BlackJackLibrary
         private Shoe shoe = new Shoe( 3 );
         private List<Player> players = new List<Player>();
         private Dictionary<String, ICallback> callbacks = new Dictionary<String, ICallback>();
-        private Player currentPlayer = null;
-        private bool blnPlayersReady = true;
+        private Player currentPlayer    = null;
+        private bool blnPlayersReady    = true;
+        private bool gameInPlay         = false;
 
         public ICallback CallBack = null;
 
@@ -29,11 +30,8 @@ namespace BlackJackLibrary
                 players.Insert( players.Count-1, newPlayer );
                 callbacks.Add( name, callback );
 
-                //initial join, start play between dealer and player 1
-                if( players.Count == 1 )
-                {
-                    currentPlayer = newPlayer;
-                } //else wait for current players turn to be over
+                if (gameInPlay)
+                    newPlayer.Status = PlayerStatusType.Waiting;
 
                 Console.WriteLine( "Player: {0} has just joined the game!", newPlayer.Name );
 
@@ -54,13 +52,25 @@ namespace BlackJackLibrary
 
         public void Ready( int bet, string name )
         {
+            gameInPlay = true;
+            Player dealer = getPlayer("Dealer");
+            if (dealer.Status != PlayerStatusType.Ready)
+            {
+                dealer.Status = PlayerStatusType.Ready;
+                dealer.CardsInPlay.Clear();
+            }
             currentPlayer = getPlayer( name );
             currentPlayer.Status = PlayerStatusType.Ready;
+            currentPlayer.HandStatus = HandStatusType.None;
+            currentPlayer.CardsInPlay.Clear();
             currentPlayer.Bank -= bet;
             currentPlayer.CurrentBet = bet;
 
             foreach( Player p in players )
             {
+                //if any player is waiting to be ready, set its status to betting
+                if (p.Status == PlayerStatusType.Waiting)
+                    p.Status = PlayerStatusType.Betting;
                 if( p.Status != PlayerStatusType.Ready )
                     blnPlayersReady = false;
             }
@@ -69,12 +79,12 @@ namespace BlackJackLibrary
             {
                 players[0].Status = PlayerStatusType.Playing;
                 dealStartingPlayerCards( );
-                updateAllClients();
             }
             else
             {
                 blnPlayersReady = true;
             }
+            updateAllClients();
 
         }
 
@@ -92,8 +102,12 @@ namespace BlackJackLibrary
         {
             currentPlayer = getPlayer( name );
             currentPlayer.Status = PlayerStatusType.Done;
-            if( currentPlayer != players[players.Count - 1] )
-                players[players.IndexOf( currentPlayer ) + 1].Status = PlayerStatusType.Playing;
+            if (currentPlayer != players[players.Count - 1])
+            {
+                //mark next player in list to play, unless they joined game mid session
+                if( players[players.IndexOf(currentPlayer) + 1].Status != PlayerStatusType.Waiting )
+                    players[players.IndexOf(currentPlayer) + 1].Status = PlayerStatusType.Playing;
+            }
 
             updateAllClients();
 
@@ -164,12 +178,12 @@ namespace BlackJackLibrary
                         //end current hand
                         p.Status = PlayerStatusType.Done;
                         p.HandStatus = HandStatusType.BlackJack;
-                        if( currentPlayer != players[players.Count - 1] )
+                        if( !currentPlayer.Name.Equals("Dealer") )
                         {
                             players[players.IndexOf( currentPlayer ) + 1].Status = PlayerStatusType.Playing;
                             updateAllClients();
                         }
-                        if( players[players.IndexOf( currentPlayer ) + 1].Name.Equals( "Dealer" ) )
+                        else //if( players[players.IndexOf( currentPlayer ) + 1].Name.Equals( "Dealer" ) )
                         {
                             currentPlayer = getPlayer( "Dealer" );
                             finishDealerHand();
@@ -202,14 +216,14 @@ namespace BlackJackLibrary
                     else
                     {
                         currentPlayer.Status = PlayerStatusType.Done;
-                        if( currentPlayer != players[players.Count - 1] )
+                        if( !currentPlayer.Name.Equals( "Dealer" ) )
                         {
                             players[players.IndexOf( currentPlayer ) + 1].Status = PlayerStatusType.Playing;
                             updateAllClients();
                         }
-                        if( players[players.IndexOf( currentPlayer ) + 1].Name.Equals("Dealer"))
+                        else// if( players[players.IndexOf( currentPlayer ) + 1].Name.Equals("Dealer"))
                         {
-                            currentPlayer = getPlayer( "Dealer" );
+                            //currentPlayer = getPlayer( "Dealer" );
                             finishDealerHand();
                             currentPlayer.Status = PlayerStatusType.Done;
                             updateAllClients();
@@ -223,14 +237,14 @@ namespace BlackJackLibrary
                 {
                     //end current hand
                     currentPlayer.Status = PlayerStatusType.Done;
-                    if( currentPlayer != players[players.Count - 1] )
+                    if( !currentPlayer.Name.Equals("Dealer"))
                     {
                         players[players.IndexOf( currentPlayer ) + 1].Status = PlayerStatusType.Playing;
                         updateAllClients();
                     }
-                    if( players[players.IndexOf( currentPlayer ) + 1].Name.Equals( "Dealer" ) )
+                   else //f( players[players.IndexOf( currentPlayer ) + 1].Name.Equals( "Dealer" ) )
                     {
-                        currentPlayer = getPlayer( "Dealer" );
+                        //currentPlayer = getPlayer( "Dealer" );
                         finishDealerHand();
                         currentPlayer.Status = PlayerStatusType.Done;
                         updateAllClients();
@@ -255,40 +269,40 @@ namespace BlackJackLibrary
             //Determine Payouts
             foreach( Player p in players )
             {
-                if( p.Name != "Dealer" )
+                if (p.Name != "Dealer")
                 {
-                    if( p.HandStatus == HandStatusType.BlackJack )
+                    if (p.HandStatus == HandStatusType.BlackJack)
                     {
                         p.Bank += p.CurrentBet * 3;
                         p.CurrentBet = 0;
                     }
-                    else if( p.HandStatus == HandStatusType.Bust )
+                    else if (p.HandStatus == HandStatusType.Bust)
                     {
                         p.CurrentBet = 0;
                     }
-                    else if( currentPlayer.CardTotal <= 21 )
+                    else if (currentPlayer.CardTotal <= 21)
                     {
-                        if( p.CardTotal > currentPlayer.CardTotal )
+                        if (p.CardTotal > currentPlayer.CardTotal)
                         {
                             p.HandStatus = HandStatusType.Winner;
                             p.Bank += p.CurrentBet * 2;
                             p.CurrentBet = 0;
                         }
-                        else if( p.CardTotal < currentPlayer.CardTotal )
+                        else if (p.CardTotal < currentPlayer.CardTotal)
                         {
                             p.HandStatus = HandStatusType.Loser;
                             p.CurrentBet = 0;
                         }
-                        else if( p.CardTotal == currentPlayer.CardTotal )
+                        else if (p.CardTotal == currentPlayer.CardTotal)
                         {
                             p.HandStatus = HandStatusType.Push;
                             p.Bank += p.CurrentBet;
                             p.CurrentBet = 0;
                         }
                     }
-                    else if( currentPlayer.CardTotal > 21 )
+                    else if (currentPlayer.CardTotal > 21)
                     {
-                        if( p.CardTotal <= 21 )
+                        if (p.CardTotal <= 21)
                         {
                             p.Bank += p.CurrentBet * 2;
                             p.CurrentBet = 0;
