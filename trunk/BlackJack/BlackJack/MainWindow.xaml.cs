@@ -77,7 +77,8 @@ namespace BlackJack
             //clear all cards
             clearCards();
             game.Ready( Convert.ToInt32( txtBid.Text ), txtJoin.Text );
-            txtBank.Text = Convert.ToString( game.getPlayer( txtJoin.Text ).Bank );          
+            txtBank.Text = Convert.ToString( game.getPlayer( txtJoin.Text ).Bank );
+            btnReady.IsEnabled = false;
         }
 
         private void clearCards()
@@ -155,23 +156,39 @@ namespace BlackJack
                         btnHit.IsEnabled = false;
                         btnStay.IsEnabled = false;
                         btnDoubleDown.IsEnabled = false;
+                        txtBid.IsEnabled = false;
                     }
                     else
                     {
                         btnHit.IsEnabled = false;
                         btnStay.IsEnabled = false;
                         btnDoubleDown.IsEnabled = false;
-                        btnReady.IsEnabled = !String.IsNullOrEmpty( txtBid.Text );
+                        txtBid.IsEnabled = true;
+                        btnReady.IsEnabled = !String.IsNullOrEmpty( txtBid.Text ) && player.Status != PlayerStatusType.Ready;
                     }
 
-                    if( player.HandStatus == HandStatusType.BlackJack )
+                    switch (player.HandStatus)
                     {
-                        MessageBox.Show( "BLACKJACK!" );
+                        case HandStatusType.BlackJack:
+                            lblStatus.Content = "BlackJack!";
+                            break;
+                        case HandStatusType.Bust:
+                            lblStatus.Content = "You Bust, Sorry!";
+                            break;
+                        case HandStatusType.Winner:
+                            lblStatus.Content = "You Win This Hand!";
+                            break;
+                        case HandStatusType.Loser:
+                            lblStatus.Content = "You Lose Sorry!";
+                            break;
+                        case HandStatusType.Push:
+                            lblStatus.Content = "Push, Nobody wins";
+                            break;
+                        default:
+                            lblStatus.Content = "";
+                            break;
                     }
-                    else if( player.HandStatus == HandStatusType.Bust )
-                    {
-                        MessageBox.Show( "You Bust!" );
-                    }
+
                     txtBank.Text = player.Bank.ToString();
                 }
                 else if( player.Name.Equals( "Dealer" ) )
