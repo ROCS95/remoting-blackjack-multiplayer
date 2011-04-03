@@ -20,11 +20,6 @@ namespace BlackJack
     /// </summary>
     public partial class MainWindow : Window
     {
-        int plrCount = 0;
-        int dlrCount = 0;
-        Card dlrSecondCard;
-        bool isAce = false;
-
         /*
         List<ucSmallCardContainer> dealerContainers = new List<ucSmallCardContainer>();
         List<ucCardContainer> playerContainers = new List<ucCardContainer>();
@@ -60,10 +55,6 @@ namespace BlackJack
             {
                 MessageBox.Show( ex.Message );
             }
-
-            btnReady.IsEnabled = false;
-            btnHit.IsEnabled = false;
-            btnStay.IsEnabled = false;
 
             /*
             //add card containers to list
@@ -126,17 +117,15 @@ namespace BlackJack
         {
             if( txtJoin.Text.Equals( "" ) )
             {
-                MessageBox.Show( "Please Enter a User Name" );
+                MessageBox.Show( "Please Enter a Username" );
             }
             else
             {
                 game.Join( txtJoin.Text, new Callback( this ) );
-                lblPlayerName.Content = txtJoin.Text;
-                txtBank.Text = Convert.ToString( game.getPlayer(lblPlayerName.Content.ToString()).State.Bank );
+                txtBank.Text = Convert.ToString( game.getPlayer(txtJoin.Text).Bank );
                 txtJoin.IsEnabled = false;
                 btnJoin.IsEnabled = false;
                 txtBid.IsEnabled = true;
-                DealerHand.lblDealerCount.Content = Convert.ToString(game.getPlayer( "Dealer" ).State.CardTotal);
             }
         }
 
@@ -144,15 +133,10 @@ namespace BlackJack
         {
             //clear all cards
             clearCards();
-            plrCount = 0;
-            dlrCount = 0;
-            mainHand.lblCount.Content = plrCount;
-            DealerHand.lblDealerCount.Content = dlrCount;
-
             game.Ready( Convert.ToInt32( txtBid.Text ), txtJoin.Text );
-            mainHand.lblCount.Content = game.getPlayer( lblPlayerName.Content.ToString() ).State.CardTotal;
-            txtBank.Text = Convert.ToString( game.getPlayer( lblPlayerName.Content.ToString() ).State.Bank );
-
+            txtBank.Text = Convert.ToString( game.getPlayer( txtJoin.Text ).Bank );
+            
+            btnReady.IsEnabled = false;
             //plrCount += card.Value + card2.Value;
 
             ////set dealers hand
@@ -191,10 +175,7 @@ namespace BlackJack
             ////btnSplit.IsEnabled = true;
 
             //mainHand.lblCount.Content = plrCount;
-            btnReady.IsEnabled = false;
-            btnHit.IsEnabled = true;
-            btnStay.IsEnabled = true;
-            btnDoubleDown.IsEnabled = true;
+            
         }
 
         private void clearCards()
@@ -224,15 +205,14 @@ namespace BlackJack
 
         private void btnHit_Click( object sender, RoutedEventArgs e )
         {
-            game.Hit();
-            mainHand.lblCount.Content = game.getPlayer( lblPlayerName.Content.ToString() ).State.CardTotal;
+            game.Hit( txtJoin.Text );
         }
 
         private void btnStay_Click( object sender, RoutedEventArgs e )
         {
+            game.Stay( txtJoin.Text );
             btnHit.IsEnabled = false;
             btnStay.IsEnabled = false;
-            btnReady.IsEnabled = true;
             btnDoubleDown.IsEnabled = false;
         }
 
@@ -271,63 +251,46 @@ namespace BlackJack
             //DealerHand.lblDealerCount.Content = dlrCount;
         }
 
-        void finishDealersHand()
-        {
-            DealerHand.card2.SetCard( dlrSecondCard, true );
-            dlrCount += dlrSecondCard.Value;
-            DealerHand.lblDealerCount.Content = dlrCount;
-
-            if( dlrCount < 17 )
-            {
-                //dlrCardHit( dealerContainers );
-                finishDealersHand();
-            }
-            else
-            {
-                if( plrCount <= 21 && dlrCount <= 21 )
-                {
-                    if( plrCount == dlrCount )
-                    {
-                        MessageBox.Show( "Push" );
-                    }
-                    else if( dlrCount < plrCount )
-                    {
-                        MessageBox.Show( "Winner!" );
-                    }
-                    else
-                    {
-                        MessageBox.Show( "Dealer Wins!" );
-                    }
-                }
-                else if( plrCount <= 21 && dlrCount > 21 )
-                {
-                    MessageBox.Show( "Winner!" );
-                }
-                else
-                {
-                    MessageBox.Show( "No Winner!" );
-                }
-
-                btnReady.IsEnabled = true;
-            }
-        }
-
-        //private void btnSplit_Click( object sender, RoutedEventArgs e )
+        //void finishDealersHand()
         //{
-        //    mainHand.Visibility = Visibility.Hidden;
+        //    DealerHand.card2.SetCard( dlrSecondCard, true );
+        //    dlrCount += dlrSecondCard.Value;
+        //    DealerHand.lblDealerCount.Content = dlrCount;
 
-        //    splitHand1.card1 = mainHand.card1;
-        //    Card card = shoe.Draw();
-        //    splitHand1.card2.SetCard( card );
+        //    if( dlrCount < 17 )
+        //    {
+        //        //dlrCardHit( dealerContainers );
+        //        finishDealersHand();
+        //    }
+        //    else
+        //    {
+        //        if( plrCount <= 21 && dlrCount <= 21 )
+        //        {
+        //            if( plrCount == dlrCount )
+        //            {
+        //                MessageBox.Show( "Push" );
+        //            }
+        //            else if( dlrCount < plrCount )
+        //            {
+        //                MessageBox.Show( "Winner!" );
+        //            }
+        //            else
+        //            {
+        //                MessageBox.Show( "Dealer Wins!" );
+        //            }
+        //        }
+        //        else if( plrCount <= 21 && dlrCount > 21 )
+        //        {
+        //            MessageBox.Show( "Winner!" );
+        //        }
+        //        else
+        //        {
+        //            MessageBox.Show( "No Winner!" );
+        //        }
 
-        //    splitHand2.card2 = mainHand.card2;
-        //    Card card2 = shoe.Draw();
-        //    splitHand2.card2.SetCard( card2 );
-
-        //    splitHand1.Visibility = Visibility.Visible;
-        //    splitHand2.Visibility = Visibility.Visible;
-
-        //}
+        //        btnReady.IsEnabled = true;
+        //    }
+        //
 
         private void btnDoubleDown_Click( object sender, RoutedEventArgs e )
         {
@@ -336,7 +299,7 @@ namespace BlackJack
             btnStay.IsEnabled = false;
             btnDoubleDown.IsEnabled = false;
             //btnSplit.IsEnabled = false;
-            finishDealersHand();
+            //finishDealersHand();
 
         }
 
@@ -396,31 +359,42 @@ namespace BlackJack
 
             int otherPlayerCount = 0;
             ucOtherPlayerHand otherPlayerHand;
+            bool blnAllPlayersDone = true;
 
             foreach( Player player in players )
             {
                 if( player.Name.Equals( txtJoin.Text ) )
                 {
-                    mainHand.lblCount.Content = player.State.CardTotal;
-
-                    for( int i = 0; i != player.State.CardsInPlay.Count; ++i )
+                    for( int i = 0; i != player.CardsInPlay.Count; ++i )
                     {
-                        ( mainHand.FindName( "card" + ( i + 1 ) ) as ucCardContainer ).SetCard( player.State.CardsInPlay[i] );
+                        ( mainHand.FindName( "card" + ( i + 1 ) ) as ucCardContainer ).SetCard( player.CardsInPlay[i] );
+                    }
+                    if( player.CardTotal > 0 )
+                        mainHand.lblCount.Content = player.CardTotal;
+                    if( player.Status == StatusType.Playing )
+                    {
+                        btnHit.IsEnabled = true;
+                        btnStay.IsEnabled = true;
+                        btnDoubleDown.IsEnabled = true;
+                    }
+                    else
+                    {
+                        btnHit.IsEnabled = false;
+                        btnStay.IsEnabled = false;
+                        btnDoubleDown.IsEnabled = false;
                     }
                 }
                 else if( player.Name.Equals( "Dealer" ) )
                 {
-                    DealerHand.lblDealerCount.Content = player.State.CardTotal;
-
-                    for( int i = 0; i != player.State.CardsInPlay.Count; ++i )
+                    for( int i = 0; i != player.CardsInPlay.Count; ++i )
                     {
                         if( i == 0 )
                         {
-                            ( DealerHand.FindName( "card" + ( i + 1 ) ) as ucSmallCardContainer ).SetCard( player.State.CardsInPlay[i], true );
+                            ( DealerHand.FindName( "card" + ( i + 1 ) ) as ucSmallCardContainer ).SetCard( player.CardsInPlay[i], true );
                         }
                         else
                         {
-                            ( DealerHand.FindName( "card" + ( i + 1 ) ) as ucSmallCardContainer ).SetCard( player.State.CardsInPlay[i] );
+                            ( DealerHand.FindName( "card" + ( i + 1 ) ) as ucSmallCardContainer ).SetCard( player.CardsInPlay[i] );
                         }
                     }
                 }
@@ -428,14 +402,32 @@ namespace BlackJack
                 {
                     ++otherPlayerCount;
                     otherPlayerHand = ( this.FindName( "PlayerContainer" + otherPlayerCount ) ) as ucOtherPlayerHand;
+                    otherPlayerHand.Visibility = Visibility.Visible;
                     otherPlayerHand.lblPlrName.Content = player.Name;
+                    otherPlayerHand.lblBank.Content = player.Bank;
+                    otherPlayerHand.lblBid.Content = player.CurrentBet;
 
-                    for( int i = 0; i != player.State.CardsInPlay.Count; ++i )
+                    for( int i = 0; i != player.CardsInPlay.Count; ++i )
                     {
-                        ( otherPlayerHand.FindName( "card" + ( i + 1 ) ) as ucSmallCardContainer ).SetCard( player.State.CardsInPlay[i] );
+                        ( otherPlayerHand.FindName( "card" + ( i + 1 ) ) as ucSmallCardContainer ).SetCard( player.CardsInPlay[i] );
                     }
                 }
+
+                //Check for End of Game
+                if( player.Status != StatusType.Done )
+                {
+                    blnAllPlayersDone = false;
+                }
             }
+
+            if( blnAllPlayersDone )
+                finishGame();
+        }
+
+        private void finishGame()
+        {
+            DealerHand.card1.SetCard( game.getPlayer("Dealer").CardsInPlay[0]);
+            DealerHand.lblDealerCount.Content = game.getPlayer( "Dealer" ).CardTotal;
         }
 
         private void txtBid_TextChanged( object sender, TextChangedEventArgs e )
