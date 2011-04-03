@@ -216,6 +216,7 @@ namespace BlackJackLibrary
                     else
                     {
                         currentPlayer.Status = PlayerStatusType.Done;
+                        currentPlayer.HandStatus = HandStatusType.Bust;
                         if( !currentPlayer.Name.Equals( "Dealer" ) )
                         {
                             players[players.IndexOf( currentPlayer ) + 1].Status = PlayerStatusType.Playing;
@@ -235,6 +236,7 @@ namespace BlackJackLibrary
                 }
                 else if( currentPlayer.CardTotal == 21 )
                 {
+                    currentPlayer.HandStatus = HandStatusType.Winner;
                     //end current hand
                     currentPlayer.Status = PlayerStatusType.Done;
                     if( !currentPlayer.Name.Equals("Dealer"))
@@ -304,8 +306,13 @@ namespace BlackJackLibrary
                     {
                         if (p.CardTotal <= 21)
                         {
+                            p.HandStatus = HandStatusType.Winner;
                             p.Bank += p.CurrentBet * 2;
                             p.CurrentBet = 0;
+                        }
+                        else
+                        {
+                            p.HandStatus = HandStatusType.Loser;
                         }
                     }
                 }
