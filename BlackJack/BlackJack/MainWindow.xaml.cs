@@ -34,19 +34,6 @@ namespace BlackJack
     /// </summary>
     public partial class MainWindow : Window
     {
-        /*
-        List<ucSmallCardContainer> dealerContainers = new List<ucSmallCardContainer>();
-        List<ucCardContainer> playerContainers = new List<ucCardContainer>();
-        List<ucOtherPlayerHand> otherPlayerHandContainers = new List<ucOtherPlayerHand>();
-
-        List<List<ucSmallCardContainer>> otherPlayerHands = new List<List<ucSmallCardContainer>>();
-        List<ucSmallCardContainer> playerContainers1 = new List<ucSmallCardContainer>();
-        List<ucSmallCardContainer> playerContainers2 = new List<ucSmallCardContainer>();
-        List<ucSmallCardContainer> playerContainers3 = new List<ucSmallCardContainer>();
-        List<ucSmallCardContainer> playerContainers4 = new List<ucSmallCardContainer>();
-        */
-
-        // Create a reference to a blackjack Game object
         private Game game;
 
         public MainWindow()
@@ -59,9 +46,6 @@ namespace BlackJack
                 RemotingConfiguration.Configure( "BlackJackClient.exe.config", false );
 
                 // Activate a game object
-
-                //game = ( Game )Activator.GetObject( typeof( Game ), "http://localhost:9999/game.binary" );
-
                 game = ( Game )Activator.GetObject( typeof( Game ), "tcp://localhost:12222/game.binary" );
 
             }
@@ -69,61 +53,6 @@ namespace BlackJack
             {
                 MessageBox.Show( ex.Message );
             }
-
-            /*
-            //add card containers to list
-            playerContainers.Add( mainHand.card1 );
-            playerContainers.Add( mainHand.card2 );
-            playerContainers.Add( mainHand.card3 );
-            playerContainers.Add( mainHand.card4 );
-            playerContainers.Add( mainHand.card5 );
-
-            //dealer cards
-            dealerContainers.Add( DealerHand.cDlrCrd1 );
-            dealerContainers.Add( DealerHand.cDlrCrd2 );
-            dealerContainers.Add( DealerHand.cDlrCrd3 );
-            dealerContainers.Add( DealerHand.cDlrCrd4 );
-            dealerContainers.Add( DealerHand.cDlrCrd5 );
-
-            //other player hand
-            playerContainers1.Add( PlayerContainer1.Card1 );
-            playerContainers1.Add( PlayerContainer1.Card2 );
-            playerContainers1.Add( PlayerContainer1.Card3 );
-            playerContainers1.Add( PlayerContainer1.Card4 );
-            playerContainers1.Add( PlayerContainer1.Card5 );
-
-            playerContainers2.Add( PlayerContainer2.Card1 );
-            playerContainers2.Add( PlayerContainer2.Card2 );
-            playerContainers2.Add( PlayerContainer2.Card3 );
-            playerContainers2.Add( PlayerContainer2.Card4 );
-            playerContainers2.Add( PlayerContainer2.Card5 );
-
-            playerContainers3.Add( PlayerContainer3.Card1 );
-            playerContainers3.Add( PlayerContainer3.Card2 );
-            playerContainers3.Add( PlayerContainer3.Card3 );
-            playerContainers3.Add( PlayerContainer3.Card4 );
-            playerContainers3.Add( PlayerContainer3.Card5 );
-
-            playerContainers4.Add( PlayerContainer4.Card1 );
-            playerContainers4.Add( PlayerContainer4.Card2 );
-            playerContainers4.Add( PlayerContainer4.Card3 );
-            playerContainers4.Add( PlayerContainer4.Card4 );
-            playerContainers4.Add( PlayerContainer4.Card5 );
-
-
-            //add other player hands to list
-            otherPlayerHands.Add( playerContainers1 );
-            otherPlayerHands.Add( playerContainers2 );
-            otherPlayerHands.Add( playerContainers3 );
-            otherPlayerHands.Add( playerContainers4 );
-
-            //add other players containers to list
-            otherPlayerHandContainers.Add( PlayerContainer1 );
-            otherPlayerHandContainers.Add( PlayerContainer2 );
-            otherPlayerHandContainers.Add( PlayerContainer3 );
-            otherPlayerHandContainers.Add( PlayerContainer4 );
-            */
-
         }
 
 
@@ -148,64 +77,11 @@ namespace BlackJack
             //clear all cards
             clearCards();
             game.Ready( Convert.ToInt32( txtBid.Text ), txtJoin.Text );
-            txtBank.Text = Convert.ToString( game.getPlayer( txtJoin.Text ).Bank );
-            
-            btnReady.IsEnabled = false;
-            //plrCount += card.Value + card2.Value;
-
-            ////set dealers hand
-            //Card dlrCard = shoe.Draw();
-            //DealerHand.cDlrCrd1.SetCard( dlrCard, false );
-            //dlrSecondCard = shoe.Draw();
-            //DealerHand.cDlrCrd2.SetCard( dlrSecondCard, true );
-            //DealerHand.lblDealer.Visibility = Visibility.Visible;
-
-            //dlrCount = dlrCard.Value;
-            //DealerHand.lblDealerCount.Content = dlrCount;
-
-            ////check if card is ace
-            //if( card.Rank == Card.RankID.Ace )
-            //    isAce = true;
-            //if( plrCount > 21 && isAce )
-            //{
-            //    plrCount -= 10;
-            //    isAce = false;
-            //}
-            //else if( plrCount == 21 )
-            //{
-            //    MessageBox.Show( "Blackjack!" );
-            //    btnReady.IsEnabled = true;
-            //    btnHit.IsEnabled = false;
-            //    btnStay.IsEnabled = false;
-
-            //    finishDealersHand();
-            //}
-
-            ////if( card.Value == card2.Value && card.Rank == card2.Rank )
-            ////{
-            ////    btnSplit.IsEnabled = true;
-            ////}
-
-            ////btnSplit.IsEnabled = true;
-
-            //mainHand.lblCount.Content = plrCount;
-            
+            txtBank.Text = Convert.ToString( game.getPlayer( txtJoin.Text ).Bank );          
         }
 
         private void clearCards()
         {
-            /*
-            foreach( ucCardContainer uc in playerContainers )
-            {
-                uc.Clear();
-            }
-
-            foreach( ucSmallCardContainer uc in dealerContainers )
-            {
-                uc.Clear();
-            }
-            */
-
             for( int i = 1; i != 6; ++i )
             {
                 ( mainHand.FindName( "card" + i ) as ucCardContainer ).Clear();
@@ -237,7 +113,6 @@ namespace BlackJack
             btnHit.IsEnabled = false;
             btnStay.IsEnabled = false;
             btnDoubleDown.IsEnabled = false;
-            //btnSplit.IsEnabled = false;
             //finishDealersHand();
 
         }
@@ -251,48 +126,6 @@ namespace BlackJack
 
         private void updateClientWindow( List<Player> players )
         {
-
-            /*
-            //clear hand
-            clearCards();
-
-            //update players' hand
-            int otherPlayerIndex = 0;
-
-            foreach( Player player in players )
-            {
-                int cardNum = 0;
-                string pName = player.Name;
-
-                if( !pName.Equals( txtJoin.Text ) && !pName.Equals( "Dealer" ) )
-                {
-                    otherPlayerIndex++;
-                    //if( otherPlayerIndex != 0 )
-                        //otherPlayerHandContainers[otherPlayerIndex - 1].lblPlrName.Content = game.getPlayer( txtJoin.Text ).Name;
-                }
-
-                if( pName.Equals( txtJoin.Text ) )
-                {
-                    mainHand.lblCount.Content = player.State.CardTotal;
-                    
-                }
-                foreach( Card card in player.State.CardsInPlay )
-                {
-                    if( pName.Equals( txtJoin.Text ) ) //main player
-                    {
-                        playerContainers[cardNum++].SetCard( card );
-                    }
-                    else if( pName.Equals( "Dealer" ) ) //dealer
-                    {
-                        dealerContainers[cardNum++].SetCard( card, cardNum == 1 );
-                    }
-                    else //other players on screen
-                    {
-                        otherPlayerHands[otherPlayerIndex-1][cardNum++].SetCard( card, false );
-                    }
-                }
-            }
-            */
 
             clearCards();
 
@@ -315,12 +148,20 @@ namespace BlackJack
                         btnHit.IsEnabled = true;
                         btnStay.IsEnabled = true;
                         btnDoubleDown.IsEnabled = true;
+                        btnReady.IsEnabled = false;
+                    }
+                    else if (player.Status == PlayerStatusType.Waiting)
+                    {
+                        btnHit.IsEnabled = false;
+                        btnStay.IsEnabled = false;
+                        btnDoubleDown.IsEnabled = false;
                     }
                     else
                     {
                         btnHit.IsEnabled = false;
                         btnStay.IsEnabled = false;
                         btnDoubleDown.IsEnabled = false;
+                        btnReady.IsEnabled = !String.IsNullOrEmpty( txtBid.Text );
                     }
 
                     if( player.HandStatus == HandStatusType.BlackJack )
@@ -331,6 +172,7 @@ namespace BlackJack
                     {
                         MessageBox.Show( "You Bust!" );
                     }
+                    txtBank.Text = player.Bank.ToString();
                 }
                 else if( player.Name.Equals( "Dealer" ) )
                 {
