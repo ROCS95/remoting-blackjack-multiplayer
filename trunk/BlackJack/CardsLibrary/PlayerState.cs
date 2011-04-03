@@ -5,17 +5,16 @@ using System.Text;
 
 namespace BlackJackLibrary
 {
-    public enum StatusType { Betting, Ready, Playing, Done };
+    //public enum StatusType { Betting, Ready, Playing, Done };
 
-    [Serializable]
-    public class PlayerState
-    {
-        public List<Card> CardsInPlay = new List<Card>();
-        public int AceCount = 0;
-        public int Bank = 0;
-        public int CurrentBet = 0;
-        public int CardTotal = 0;
+    //[Serializable]
+    //public class PlayerState
+    //{
+    //    //public List<Card> CardsInPlay = new List<Card>();
+    //    //public int Bank = 0;
+    //    //public int CurrentBet = 0;
+    //    //public int CardTotal = 0;
 
-        public StatusType Status;
-    }
+    //    //public StatusType Status;
+    //}
 }

@@ -11,8 +11,11 @@ namespace BlackJackLibrary
         private List<Player> players = new List<Player>();
         private Dictionary<String, ICallback> callbacks = new Dictionary<String, ICallback>();
         private Player currentPlayer = null;
+        private bool blnPlayersReady = true;
+        private bool blnPlayersDone = true;
+
         public ICallback CallBack = null;
-        public int PlayerNum;
+
 
         public void Join( string name, ICallback callback )
         {
@@ -26,27 +29,21 @@ namespace BlackJackLibrary
                 if( players.Count == 1 )
                 {
                     currentPlayer = newPlayer;
-                    startGame();
                 } //else wait for current players turn to be over
 
                 Console.WriteLine( "Player: {0} has just joined the game!", newPlayer.Name );
 
                 updateAllClients();
             }
-            catch( Exception )
+            catch( Exception ex)
             {
-
+                Console.WriteLine( "Error:" + ex );
             }
         }
 
-        private void startGame()
+        public void Hit( string name )
         {
-            players.Add( new Player( "Dealer" ) );
-            dealDealerCards(2);
-        }
-
-        public void Hit()
-        {
+            currentPlayer = getPlayer( name );
             dealCards( 1 );
             updateAllClients();
         }
@@ -54,98 +51,82 @@ namespace BlackJackLibrary
         public void Ready( int bet, string name )
         {
             currentPlayer = getPlayer( name );
-            dealCards( 2 );
-            updateAllClients();
+            currentPlayer.Status = StatusType.Ready;
+            currentPlayer.Bank -= bet;
+            currentPlayer.CurrentBet = bet;
+
+            foreach( Player p in players )
+            {
+                if( p.Status != StatusType.Ready )
+                    blnPlayersReady = false;
+            }
+
+            if( blnPlayersReady )
+            {
+                players[0].Status = StatusType.Playing;
+                startGame();
+                dealStartingPlayerCards( );
+                updateAllClients();
+            }
+            else
+            {
+                blnPlayersReady = true;
+            }
+
         }
 
-        public Player getPlayer( string id )
+        public Player getPlayer( string name )
         {
             foreach( Player player in players )
             {
-                if ( id.Equals( player.Name ) )
+                if ( name.Equals( player.Name ) )
                     return player;
             }
             return new Player( null );
         }
 
-        private void dealDealerCards( int nCards )
+        public void Stay( string name )
         {
-            Player dealer = getPlayer( "Dealer" );
-            dealer.State.CardsInPlay.AddRange( drawMultiple( nCards ) );
-            //reset count
-            dealer.State.CardTotal = 0;
-            //get count of current cards
-            foreach( Card card in dealer.State.CardsInPlay )
+            currentPlayer = getPlayer( name );
+            currentPlayer.Status = StatusType.Done;
+            if( currentPlayer != players[players.Count - 1] )
+                players[players.IndexOf( currentPlayer )+1].Status = StatusType.Playing;
+
+            updateAllClients();
+
+            if( getPlayer( "Dealer" ).Status == StatusType.Playing )
             {
-                //check if card is ace
-                dealer.State.CardTotal += card.Value;
+                currentPlayer = getPlayer( "Dealer" );
 
-                if( card.Rank == Card.RankID.Ace )
-                    dealer.State.AceCount++;
-                if( dealer.State.CardTotal > 21 && dealer.State.AceCount > 0 )
-                {
-                    dealer.State.CardTotal -= 10;
-                    dealer.State.AceCount--;
-                }
-                else if( dealer.State.CardTotal == 21 )
-                {
-                    //end current hand
+                //Finish Dealer Hand
 
-                    //award wager amount * 3
+                //Switch Dealer to Done
+                currentPlayer.Status = StatusType.Done;
 
-                    //move to next player
+                //Finish Game (Determine Payouts / Start next Hand)
+                
 
-                    //if no more players
-
-                    //finishDealersHand();
-                }
             }
+            
 
-        }
-        private void dealCards( int nCards )
-        {
-            currentPlayer.State.CardsInPlay.AddRange( drawMultiple( nCards ) );
-            //reset count
-            currentPlayer.State.CardTotal = 0;
-            //get count of current cards
-            foreach( Card card in currentPlayer.State.CardsInPlay )
-            {
-                //check if card is ace
-                currentPlayer.State.CardTotal += card.Value;
-
-                if( card.Rank == Card.RankID.Ace )
-                    currentPlayer.State.AceCount++;
-                if( currentPlayer.State.CardTotal > 21 && currentPlayer.State.AceCount > 0 )
-                {
-                    currentPlayer.State.CardTotal -= 10;
-                    currentPlayer.State.AceCount--;
-                }
-                else if( currentPlayer.State.CardTotal == 21 )
-                {
-                    //end current hand
-
-                    //award wager amount * 3
-
-                    //move to next player
-
-                    //if no more players
-
-                    //finishDealersHand();
-                }
-            }
-        }
-
-        public void Stay()
-        {
-            currentPlayer.State.Status = StatusType.Done;
         }
 
         // Helper methods
-        private List<Card> drawMultiple( int nCards )
+
+        private void startGame()
+        {
+            players.Add( new Player( "Dealer" ) );
+            dealDealerCards( 2 );
+        }
+
+        private List<Card> drawMultiple( int nCards, string name )
         {
             List<Card> cards = new List<Card>();
             for( int i = 0; i < nCards; i++ )
+            {
                 cards.Add( shoe.Draw() );
+                    Console.WriteLine( "Deal: {0} to {1}", cards[i].Name, getPlayer(name).Name );
+            }
 
             return cards;
         }
@@ -155,6 +136,102 @@ namespace BlackJackLibrary
             foreach( Player player in players )
                 if( !player.Name.Equals( "Dealer" ) )
                     callbacks[ player.Name ].PlayerUpdate( players );
+        }
+
+        private void dealStartingPlayerCards()
+        {
+            foreach( Player p in players )
+            {
+                if( !p.Name.Equals( "Dealer" ) )
+                {
+                    p.CardsInPlay.AddRange( drawMultiple( 2, p.Name ) );
+                    //reset count
+                    p.CardTotal = 0;
+                    //get count of current cards
+                    foreach( Card card in p.CardsInPlay )
+                    {
+                        //check if card is ace
+                        p.CardTotal += card.Value;
+
+                        if( p.CardTotal > 21 )
+                        {
+                            if( card.Rank == Card.RankID.Ace )
+                                p.CardTotal -= 10;
+                        }
+                        else if( p.CardTotal == 21 )
+                        {
+                            //end current hand
+                            p.Status = StatusType.Done;
+
+                            //award wager amount * 3
+                            p.Bank += p.CurrentBet * 3;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void dealDealerCards( int nCards )
+        {
+            Player dealer = getPlayer( "Dealer" );
+            dealer.CardsInPlay.AddRange( drawMultiple( nCards, dealer.Name ) );
+            //reset count
+            dealer.CardTotal = 0;
+            //get count of current cards
+            foreach( Card card in dealer.CardsInPlay )
+            {
+
+                dealer.CardTotal += card.Value;
+
+                //check if card is ace
+                if( dealer.CardTotal > 21 )
+                {
+                    if( card.Rank == Card.RankID.Ace )
+                        dealer.CardTotal -= 10;
+                }
+                else if( dealer.CardTotal == 21 )
+                {
+                    //end current hand
+
+                    //determine winners
+                }
+            }
+
+        }
+
+        private void dealCards( int nCards )
+        {
+            currentPlayer.CardsInPlay.AddRange( drawMultiple( nCards, currentPlayer.Name ) );
+            //reset count
+            currentPlayer.CardTotal = 0;
+            //get count of current cards
+            foreach( Card card in currentPlayer.CardsInPlay )
+            {
+                //check if card is ace
+                currentPlayer.CardTotal += card.Value;
+
+                if( currentPlayer.CardTotal > 21 )
+                {
+                    if( card.Rank == Card.RankID.Ace )
+                    {
+                        currentPlayer.CardTotal -= 10;
+                    }
+                    else
+                    {
+                        currentPlayer.Status = StatusType.Done;
+                        if( currentPlayer != players[players.Count - 1] )
+                            players[players.IndexOf( currentPlayer ) + 1].Status = StatusType.Playing;
+                    }
+
+                }
+                else if( currentPlayer.CardTotal == 21 )
+                {
+                    //end current hand
+                    currentPlayer.Status = StatusType.Done;
+                    if( currentPlayer != players[players.Count - 1] )
+                        players[players.IndexOf( currentPlayer ) + 1].Status = StatusType.Playing;
+                }
+            }
         }
 
     }

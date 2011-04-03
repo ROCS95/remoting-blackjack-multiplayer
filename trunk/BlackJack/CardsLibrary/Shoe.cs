@@ -53,7 +53,7 @@ namespace BlackJackLibrary
             if (cardIdx == cards.Count)
                 throw new System.IndexOutOfRangeException("The shoe is empty. Please reset.");
             
-            Console.WriteLine("Deal: {0}", cards[cardIdx].Name);
+            //Console.WriteLine("Deal: {0}", cards[cardIdx].Name);
 
             return cards[cardIdx++];
         }
