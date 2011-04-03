@@ -11,10 +11,10 @@
         <my:ucSmallCardContainer HorizontalAlignment="Left" Margin="120,12,0,0" x:Name="card3" VerticalAlignment="Top" />
         <my:ucSmallCardContainer HorizontalAlignment="Left" Margin="128,12,0,0" x:Name="card4" VerticalAlignment="Top" />
         <my:ucSmallCardContainer HorizontalAlignment="Left" Margin="135,12,0,0" x:Name="card5" VerticalAlignment="Top" />
-        <Label Content="Name" Height="28" HorizontalAlignment="Left" Name="lblPlrName" VerticalAlignment="Top" Foreground="White" />
+        <Label Content="" Height="28" HorizontalAlignment="Left" Name="lblPlrName" VerticalAlignment="Top" Foreground="White" />
         <Label Content="Bid:" Height="28" HorizontalAlignment="Left" Margin="0,19,0,0" Name="label1" VerticalAlignment="Top" Foreground="White" />
         <Label Content="Bank:" Height="28" HorizontalAlignment="Left" Margin="0,35,0,0" Name="label2" VerticalAlignment="Top" Foreground="White" />
-        <Label Content="$$$" Height="28" HorizontalAlignment="Left" Margin="33,19,0,0" Name="lblBid" VerticalAlignment="Top" Foreground="White" />
-        <Label Content="$$$" Height="28" HorizontalAlignment="Left" Margin="33,35,0,0" Name="lblBank" VerticalAlignment="Top" Foreground="White" />
+        <Label Content="" Height="28" HorizontalAlignment="Left" Margin="33,19,0,0" Name="lblBid" VerticalAlignment="Top" Foreground="White" />
+        <Label Content="" Height="28" HorizontalAlignment="Left" Margin="33,35,0,0" Name="lblBank" VerticalAlignment="Top" Foreground="White" />
     </Grid>
 </UserControl>
