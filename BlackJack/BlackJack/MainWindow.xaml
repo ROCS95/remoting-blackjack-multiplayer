@@ -29,7 +29,7 @@
             <TextBox Canvas.Left="550" Canvas.Top="338" Height="23" Name="txtBid" Width="83" IsEnabled="False" TextChanged="txtBid_TextChanged" />
             <Label Canvas.Left="511" Canvas.Top="293" Content="Bank:" FontWeight="Bold" Foreground="White" Height="29" Name="label2" />
             <TextBox Canvas.Left="550" Canvas.Top="297" Height="23" Name="txtBank" Width="83" IsEnabled="True" IsReadOnly="True" />
-            <Label Canvas.Left="280" Canvas.Top="148" Content="" Height="36" Name="lblStatus" FontWeight="Bold" FontSize="16" Foreground="#FFF8F8F8" />
+            <Label Canvas.Left="201" Canvas.Top="143" Content="" Height="35" Name="lblStatus" FontWeight="Bold" FontSize="14" Foreground="#FFF8F8F8" Width="454" />
         </Canvas>
     </Grid>
 </Window>

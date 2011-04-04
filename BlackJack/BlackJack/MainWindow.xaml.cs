@@ -128,7 +128,6 @@ namespace BlackJack
 
             int otherPlayerCount = 0;
             ucOtherPlayerHand otherPlayerHand;
-            bool blnAllPlayersDone = true;
 
             foreach( Player player in players )
             {
@@ -190,12 +189,15 @@ namespace BlackJack
                                 lblStatus.Content = "";
                             break;
                     }
-
+                    //if (player.isNewPlayer && player.HandStatus != HandStatusType.None) //current game is over
+                      //  lblStatus.Content = "Current game is over, you may now place bet.";
+                    
                     txtBank.Text = player.Bank.ToString();
                 }
                 else if( player.Name.Equals( "Dealer" ) )
                 {
                     DealerHand.Visibility = Visibility.Visible;
+                    DealerHand.lblDealerCount.Content = "";
                     for( int i = 0; i != player.CardsInPlay.Count; ++i )
                     {
                         if( i == 0 )
@@ -222,15 +224,9 @@ namespace BlackJack
                         ( otherPlayerHand.FindName( "card" + ( i + 1 ) ) as ucSmallCardContainer ).SetCard( player.CardsInPlay[i] );
                     }
                 }
-
-                //Check for End of Game
-                if( player.Status != PlayerStatusType.Done )
-                {
-                    blnAllPlayersDone = false;
-                }
             }
 
-            if( blnAllPlayersDone )
+            if( game.IsRoundFinished )
                 finishGame();
         }
 
