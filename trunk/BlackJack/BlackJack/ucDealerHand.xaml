@@ -5,11 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:cust="clr-namespace:BlackJack"
              mc:Ignorable="d" 
-             d:DesignHeight="174" d:DesignWidth="196" xmlns:my="clr-namespace:BlackJack">
+             d:DesignHeight="174" d:DesignWidth="196" xmlns:my="clr-namespace:BlackJack" Visibility="Hidden">
     <Grid>
         <Label Content="" FontWeight="Bold" Foreground="White" Height="28" Margin="22,19,139,127" Name="lblDealerCount" FontSize="10" />
         
-        <Label Content="Dealer" Height="28" HorizontalAlignment="Left" Margin="63,0,0,43" Name="lblDealer" VerticalAlignment="Bottom" Foreground="#E6FFFFFF" FontWeight="Bold" IsEnabled="True" Visibility="Hidden" />
+        <Label Content="Dealer" Height="28" HorizontalAlignment="Left" Margin="63,0,0,43" Name="lblDealer" VerticalAlignment="Bottom" Foreground="#E6FFFFFF" FontWeight="Bold" IsEnabled="True" Visibility="Visible" />
         <cust:ucSmallCardContainer Height="55" Margin="44,39,104,72" x:Name="card1" />
         <cust:ucSmallCardContainer Height="55" Margin="53,42,96,77" x:Name="card2" />
         <cust:ucSmallCardContainer Height="55" Margin="59,28,90,91" x:Name="card3" />

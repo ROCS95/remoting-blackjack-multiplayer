@@ -93,6 +93,17 @@ namespace BlackJack
             btnDoubleDown.IsEnabled = false;
         }
 
+        private void hideWindows()
+        {
+            DealerHand.Visibility = Visibility.Hidden;
+            PlayerContainer1.Visibility = Visibility.Hidden;
+            PlayerContainer2.Visibility = Visibility.Hidden;
+            PlayerContainer3.Visibility = Visibility.Hidden;
+            PlayerContainer4.Visibility = Visibility.Hidden;
+            mainHand.Visibility = Visibility.Hidden;
+
+        }
+
         private void btnDoubleDown_Click( object sender, RoutedEventArgs e )
         {
             game.DoubleDown( txtJoin.Text);
@@ -100,8 +111,6 @@ namespace BlackJack
             btnHit.IsEnabled = false;
             btnStay.IsEnabled = false;
             btnDoubleDown.IsEnabled = false;
-            //finishDealersHand();
-
         }
 
         private delegate void ClientUpdateDelegate( List<Player> players );
@@ -115,6 +124,7 @@ namespace BlackJack
         {
 
             clearCards();
+            hideWindows();
 
             int otherPlayerCount = 0;
             ucOtherPlayerHand otherPlayerHand;
@@ -124,6 +134,7 @@ namespace BlackJack
             {
                 if( player.Name.Equals( txtJoin.Text ) )
                 {
+                    mainHand.Visibility = Visibility.Visible;
                     for( int i = 0; i != player.CardsInPlay.Count; ++i )
                     {
                         ( mainHand.FindName( "card" + ( i + 1 ) ) as ucCardContainer ).SetCard( player.CardsInPlay[i] );
@@ -136,8 +147,9 @@ namespace BlackJack
                         btnStay.IsEnabled = true;
                         btnDoubleDown.IsEnabled = true;
                         btnReady.IsEnabled = false;
+                        txtBid.IsEnabled = true;
                     }
-                    else if (player.Status == PlayerStatusType.Waiting)
+                    else if (player.Status == PlayerStatusType.Done && player.isNewPlayer)
                     {
                         btnHit.IsEnabled = false;
                         btnStay.IsEnabled = false;
@@ -160,6 +172,7 @@ namespace BlackJack
                             break;
                         case HandStatusType.Bust:
                             lblStatus.Content = "You Bust, Sorry!";
+
                             break;
                         case HandStatusType.Winner:
                             lblStatus.Content = "You Win This Hand!";
@@ -171,7 +184,10 @@ namespace BlackJack
                             lblStatus.Content = "Push, Nobody wins";
                             break;
                         default:
-                            lblStatus.Content = "";
+                            if( player.isNewPlayer )
+                                lblStatus.Content = "Game currently in progress. Please wait until next round";
+                            else
+                                lblStatus.Content = "";
                             break;
                     }
 
@@ -179,6 +195,7 @@ namespace BlackJack
                 }
                 else if( player.Name.Equals( "Dealer" ) )
                 {
+                    DealerHand.Visibility = Visibility.Visible;
                     for( int i = 0; i != player.CardsInPlay.Count; ++i )
                     {
                         if( i == 0 )
@@ -228,6 +245,14 @@ namespace BlackJack
             int bet;
             if( int.TryParse( txtBid.Text, out bet ) )
                 btnReady.IsEnabled = true;
+        }
+
+        private void Window_Closing( object sender, System.ComponentModel.CancelEventArgs e )
+        {
+            if( MessageBox.Show( "Are you sure you want to quit?", "Closing", MessageBoxButton.YesNo, MessageBoxImage.Question ) == MessageBoxResult.Yes )
+            {
+                game.removePlayer( txtJoin.Text );
+            }
         }
     }
 }
