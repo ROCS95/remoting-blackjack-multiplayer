@@ -65,6 +65,7 @@ namespace BlackJack
             game.Ready( Convert.ToInt32( txtBid.Text ), txtJoin.Text );
             txtBank.Text = Convert.ToString( game.getPlayer( txtJoin.Text ).Bank );
             btnReady.IsEnabled = false;
+            btnDoubleDown.IsEnabled = true;
         }
 
         private void clearCards()
@@ -83,6 +84,7 @@ namespace BlackJack
         private void btnHit_Click( object sender, RoutedEventArgs e )
         {
             game.Hit( txtJoin.Text );
+            btnDoubleDown.IsEnabled = false;
         }
 
         private void btnStay_Click( object sender, RoutedEventArgs e )
