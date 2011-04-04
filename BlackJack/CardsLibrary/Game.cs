@@ -27,11 +27,14 @@ namespace BlackJackLibrary
             try
             {
                 Player newPlayer = new Player( name );
-                players.Insert( players.Count-1, newPlayer );
+                players.Insert( 0, newPlayer );
                 callbacks.Add( name, callback );
 
-                if (gameInPlay)
-                    newPlayer.Status = PlayerStatusType.Waiting;
+                if( gameInPlay )
+                {
+                    newPlayer.Status = PlayerStatusType.Done;
+                    newPlayer.isNewPlayer = true;
+                }
 
                 Console.WriteLine( "Player: {0} has just joined the game!", newPlayer.Name );
 
@@ -73,6 +76,8 @@ namespace BlackJackLibrary
                     p.Status = PlayerStatusType.Betting;
                 if( p.Status != PlayerStatusType.Ready )
                     blnPlayersReady = false;
+                if( p.isNewPlayer )
+                    p.isNewPlayer = false;
             }
 
             if( blnPlayersReady )
@@ -105,7 +110,7 @@ namespace BlackJackLibrary
             if (currentPlayer != players[players.Count - 1])
             {
                 //mark next player in list to play, unless they joined game mid session
-                if( players[players.IndexOf(currentPlayer) + 1].Status != PlayerStatusType.Waiting )
+                if( players[players.IndexOf(currentPlayer) + 1].Status == PlayerStatusType.Ready )
                     players[players.IndexOf(currentPlayer) + 1].Status = PlayerStatusType.Playing;
             }
 
@@ -131,6 +136,46 @@ namespace BlackJackLibrary
             currentPlayer.CurrentBet *= 2;
             updateAllClients();
             currentPlayer.Status = PlayerStatusType.Done;
+            if( currentPlayer != players[players.Count - 1] )
+            {
+                //mark next player in list to play, unless they joined game mid session
+                if( players[players.IndexOf( currentPlayer ) + 1].Status == PlayerStatusType.Ready )
+                    players[players.IndexOf( currentPlayer ) + 1].Status = PlayerStatusType.Playing;
+            }
+
+            updateAllClients();
+
+            if( getPlayer( "Dealer" ).Status == PlayerStatusType.Playing )
+            {
+                currentPlayer = getPlayer( "Dealer" );
+
+                finishDealerHand();
+
+                currentPlayer.Status = PlayerStatusType.Done;
+                updateAllClients();
+                determinePayouts();
+                updateAllClients();
+            }
+        }
+
+        public void removePlayer( string name )
+        {
+            try
+            {
+                if( getPlayer( name ).Status == PlayerStatusType.Playing )
+                {
+                    if( players[players.IndexOf( currentPlayer ) + 1].Status == PlayerStatusType.Ready )
+                        players[players.IndexOf( currentPlayer ) + 1].Status = PlayerStatusType.Playing;
+                }
+
+                players.Remove( getPlayer( name ) );
+                Console.WriteLine( "Player:" + name + " has left the game" );
+            }
+            catch( Exception ex )
+            {
+                Console.WriteLine( "Error: " + ex );
+            }
+            updateAllClients();
         }
 
         // Helper methods
@@ -178,15 +223,19 @@ namespace BlackJackLibrary
                         //end current hand
                         p.Status = PlayerStatusType.Done;
                         p.HandStatus = HandStatusType.BlackJack;
-                        if( !currentPlayer.Name.Equals("Dealer") )
+                        if( !currentPlayer.Name.Equals( "Dealer" ) )
                         {
-                            players[players.IndexOf( currentPlayer ) + 1].Status = PlayerStatusType.Playing;
+                            //mark next player in list to play, unless they joined game mid session
+                            if( players[players.IndexOf( currentPlayer ) + 1].Status == PlayerStatusType.Ready )
+                                players[players.IndexOf( currentPlayer ) + 1].Status = PlayerStatusType.Playing;
+
                             updateAllClients();
                         }
-                        else //if( players[players.IndexOf( currentPlayer ) + 1].Name.Equals( "Dealer" ) )
+                        if( getPlayer( "Dealer" ).Status == PlayerStatusType.Playing )
                         {
                             currentPlayer = getPlayer( "Dealer" );
                             finishDealerHand();
+                            currentPlayer.Status = PlayerStatusType.Done;
                             updateAllClients();
                             determinePayouts();
                             updateAllClients();
@@ -219,12 +268,15 @@ namespace BlackJackLibrary
                         currentPlayer.HandStatus = HandStatusType.Bust;
                         if( !currentPlayer.Name.Equals( "Dealer" ) )
                         {
-                            players[players.IndexOf( currentPlayer ) + 1].Status = PlayerStatusType.Playing;
+                            //mark next player in list to play, unless they joined game mid session
+                            if( players[players.IndexOf( currentPlayer ) + 1].Status == PlayerStatusType.Ready )
+                                players[players.IndexOf( currentPlayer ) + 1].Status = PlayerStatusType.Playing;
+                            
                             updateAllClients();
                         }
-                        else// if( players[players.IndexOf( currentPlayer ) + 1].Name.Equals("Dealer"))
+                        if( getPlayer( "Dealer" ).Status == PlayerStatusType.Playing ) 
                         {
-                            //currentPlayer = getPlayer( "Dealer" );
+                            currentPlayer = getPlayer( "Dealer" );
                             finishDealerHand();
                             currentPlayer.Status = PlayerStatusType.Done;
                             updateAllClients();
@@ -241,12 +293,14 @@ namespace BlackJackLibrary
                     currentPlayer.Status = PlayerStatusType.Done;
                     if( !currentPlayer.Name.Equals("Dealer"))
                     {
-                        players[players.IndexOf( currentPlayer ) + 1].Status = PlayerStatusType.Playing;
+                        //mark next player in list to play, unless they joined game mid session
+                        if( players[players.IndexOf( currentPlayer ) + 1].Status == PlayerStatusType.Ready )
+                            players[players.IndexOf( currentPlayer ) + 1].Status = PlayerStatusType.Playing;
                         updateAllClients();
                     }
-                   else //f( players[players.IndexOf( currentPlayer ) + 1].Name.Equals( "Dealer" ) )
+                    if( getPlayer( "Dealer" ).Status == PlayerStatusType.Playing )
                     {
-                        //currentPlayer = getPlayer( "Dealer" );
+                        currentPlayer = getPlayer( "Dealer" );
                         finishDealerHand();
                         currentPlayer.Status = PlayerStatusType.Done;
                         updateAllClients();
