@@ -1,18 +1,4 @@
-﻿/*
- *Hey Jer! Got most done tonight But Im getting tired and lossing focus haha so I pass this of to you for now 
- * I have betting, player turns ect working atm.  But We need to figure out how to start a new game
- * We also need to do popups to tell the player what if the won or not, i already do this if the get BlackJack though
- * as it is not an end game thing.  I added a HandStatus to the player to set if their hand was a winner loser ect
- * so we could use that to determine what message to pop up I am just unsure at the moment the best way to do it.  Another smallish thing
- * will be to figure out what to do when we hit 5 cards... I looked it up and apparently its not a common rule un BlackJack to win
- * if you hit 5 but we can make it a rule in ours so its easier.Also, I rewrote a bunch of your callback stuff so we dount need to use 
- * the Lists but I left your code there for not just in case you need it.
- * I think thats about everything, I didnt get a change to do the design doc yet either, or many comments. But we can figure something out for that
- * Text me tomorrow if you have any questions.  I hope what I did is okay for now. 
- */
-
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -179,7 +165,7 @@ namespace BlackJack
                             lblStatus.Content = "You Win This Hand!";
                             break;
                         case HandStatusType.Loser:
-                            lblStatus.Content = "You Lose Sorry!";
+                            lblStatus.Content = "You Lose, Sorry!";
                             break;
                         case HandStatusType.Push:
                             lblStatus.Content = "Push, Nobody wins";
