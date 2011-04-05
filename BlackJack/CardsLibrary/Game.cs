@@ -122,9 +122,9 @@ namespace BlackJackLibrary
             {
                 players[0].Status = PlayerStatusType.Playing;
                 Console.WriteLine( "Player {0} is now Playing.", players[0].Name );
-                dealStartingPlayerCards();
                 isGameInPlay = true;
                 isRoundFinished = false;
+                dealStartingPlayerCards();
             }
             else
             {
@@ -272,6 +272,13 @@ namespace BlackJackLibrary
                     }
                     else
                     {
+                        //check if next player is dealer
+                        if( players[players.IndexOf( currentPlayer ) + 1].Name.Equals( "Dealer" ) )
+                        {
+                            players[players.IndexOf( currentPlayer ) + 1].Status = PlayerStatusType.Playing;
+                            //record to the server console
+                            Console.WriteLine( "Player {0} is now Playing.", players[players.IndexOf( currentPlayer ) + 1].Name );
+                        }
                         //set next player to be the current player
                         currentPlayer = players[players.IndexOf( currentPlayer ) + 1];
                     }
@@ -296,9 +303,10 @@ namespace BlackJackLibrary
          */
         private void dealStartingPlayerCards()
         {
+            bool isPlayersDone = true;
             foreach( Player p in players )
             {
-                //add to cards to the player
+                //add cards
                 p.CardsInPlay.AddRange( drawMultiple( 2, p.Name ) );
 
                 //reset count
@@ -331,6 +339,13 @@ namespace BlackJackLibrary
                         p.HandStatus = HandStatusType.BlackJack;
                     }
                 }
+                if( p.Status != PlayerStatusType.Done && !p.Name.Equals("Dealer") )
+                    isPlayersDone = false;    
+            }
+            if( isPlayersDone )
+            {
+                currentPlayer = GetPlayer( "Dealer" );
+                finishDealerHand();
             }
         }
 
