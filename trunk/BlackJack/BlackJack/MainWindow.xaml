@@ -14,14 +14,14 @@
                 <ImageBrush ImageSource="img/felt.jpg"  Stretch="Fill" />
             </Canvas.Background>
             <cust:ucDealerHand x:Name="DealerHand" Canvas.Left="6" Canvas.Right="1" Canvas.Top="6" Height="172" Width="189" />
-            <Button Canvas.Left="149" Canvas.Top="377" Content="Double Down" Height="23" IsEnabled="False" Name="btnDoubleDown" Width="86" Click="btnDoubleDown_Click" />
+            <Button Canvas.Left="149" Canvas.Top="402" Content="Double Down" Height="23" IsEnabled="False" Name="btnDoubleDown" Width="86" Click="btnDoubleDown_Click" />
             <cust:ucOtherPlayerHand Canvas.Left="269" Canvas.Top="6" x:Name="PlayerContainer1" Height="70" Width="175" Visibility="Hidden" />
             <cust:ucOtherPlayerHand Canvas.Left="269" Canvas.Top="80" x:Name="PlayerContainer2" Visibility="Hidden" Height="70" />
             <cust:ucOtherPlayerHand Canvas.Left="466" Canvas.Top="6" Height="70" x:Name="PlayerContainer3" Width="175" Visibility="Hidden" />
             <cust:ucOtherPlayerHand Canvas.Left="466" Canvas.Top="80" x:Name="PlayerContainer4" Visibility="Hidden" Height="70" />
-            <cust:MainUserHand Canvas.Left="240" Canvas.Top="186" x:Name="mainHand" />
-            <Button Canvas.Left="274" Canvas.Top="377" Content="Stay" Height="23" Name="btnStay" Width="44" Click="btnStay_Click" IsEnabled="False" />
-            <Button Canvas.Left="324" Canvas.Top="377" Content="Hit" Height="23" Name="btnHit" Width="44" Click="btnHit_Click" IsEnabled="False" />
+            <cust:MainUserHand Canvas.Left="240" Canvas.Top="212" x:Name="mainHand" />
+            <Button Canvas.Left="274" Canvas.Top="402" Content="Stay" Height="23" Name="btnStay" Width="44" Click="btnStay_Click" IsEnabled="False" />
+            <Button Canvas.Left="324" Canvas.Top="402" Content="Hit" Height="23" Name="btnHit" Width="44" Click="btnHit_Click" IsEnabled="False" />
             <TextBox Height="23" Name="txtJoin" Width="133" Canvas.Left="522" Canvas.Top="200" AcceptsReturn="False" />
             <Button Content="Join" Height="23" Name="btnJoin" Width="75" Click="btnJoin_Click" Canvas.Left="550" Canvas.Top="237" />
             <Button Content="Ready" Height="23" Name="btnReady" Width="75" Click="btnReady_Click" Canvas.Left="550" Canvas.Top="377" IsEnabled="False" />
@@ -29,7 +29,7 @@
             <TextBox Canvas.Left="550" Canvas.Top="338" Height="23" Name="txtBid" Width="83" IsEnabled="False" TextChanged="txtBid_TextChanged" />
             <Label Canvas.Left="511" Canvas.Top="293" Content="Bank:" FontWeight="Bold" Foreground="White" Height="29" Name="label2" />
             <TextBox Canvas.Left="550" Canvas.Top="297" Height="23" Name="txtBank" Width="83" IsEnabled="True" IsReadOnly="True" />
-            <Label Canvas.Left="201" Canvas.Top="143" Content="" Height="35" Name="lblStatus" FontWeight="Bold" FontSize="14" Foreground="#FFF8F8F8" Width="454" />
+            <Label Canvas.Left="201" Canvas.Top="143" Content="" Height="63" Name="lblStatus" FontWeight="Bold" FontSize="14" Foreground="#FFF8F8F8" Width="315" />
         </Canvas>
     </Grid>
 </Window>

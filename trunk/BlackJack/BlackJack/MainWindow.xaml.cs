@@ -269,6 +269,7 @@ namespace BlackJackClient
                     //disable and enable buttons based on players status
                     if( player.Status == PlayerStatusType.Playing )
                     {
+                        lblStatus.Content = "\n\t\tYour Turn!";
                         btnHit.IsEnabled = true;
                         btnStay.IsEnabled = true;
                         if(player.CardsInPlay.Count < 3)
@@ -288,8 +289,11 @@ namespace BlackJackClient
                         btnHit.IsEnabled = false;
                         btnStay.IsEnabled = false;
                         btnDoubleDown.IsEnabled = false;
-                        txtBid.IsEnabled = true;
-                        btnReady.IsEnabled = true;
+                        if( game.IsRoundFinished )
+                        {
+                            txtBid.IsEnabled = true;
+                            btnReady.IsEnabled = true;
+                        }
                     }
                     else if( player.Status == PlayerStatusType.Betting )
                     {
@@ -297,6 +301,8 @@ namespace BlackJackClient
                         btnStay.IsEnabled = false;
                         btnDoubleDown.IsEnabled = false;
                         txtBid.IsEnabled = true;
+                        txtBid.Background = Brushes.Yellow;
+                        lblStatus.Content = "Please place your bet!";
                         if( txtBid.Text == "" || txtBid.Text == null )
                             btnReady.IsEnabled = false;
                         else
@@ -318,14 +324,14 @@ namespace BlackJackClient
                         switch( player.HandStatus )
                         {
                             case HandStatusType.BlackJack:
-                                lblStatus.Content = "BlackJack!";
+                                lblStatus.Content = "\n\t\tBlackJack!";
                                 break;
                             case HandStatusType.Bust:
-                                lblStatus.Content = "You Bust, Sorry!";
+                                lblStatus.Content = "\n\t\tSorry, You Bust!";
                                 //close the game if they  run out of money
                                 if( player.Bank == 0 )
                                 {
-                                    if( MessageBox.Show( "You have ran out of money.  Thank you for Playing.", "Out of Money!", MessageBoxButton.OK, MessageBoxImage.Exclamation ) == MessageBoxResult.OK )
+                                    if( MessageBox.Show( "You have ran out of money. \n Thank you for Playing.", "Out of Money!", MessageBoxButton.OK, MessageBoxImage.Exclamation ) == MessageBoxResult.OK )
                                     {
                                         showClosingMsg = false;
                                         this.Close();
@@ -333,14 +339,14 @@ namespace BlackJackClient
                                 }
                                 break;
                             case HandStatusType.Winner:
-                                lblStatus.Content = "You Win This Hand!";
+                                lblStatus.Content = "\nWinner, Winner, Chicken Dinner!";
                                 break;
                             case HandStatusType.Loser:
-                                lblStatus.Content = "You Lose, Sorry!";
+                                lblStatus.Content = "\tSorry, Dealer Win!";
                                 if( player.Bank == 0 )
                                 {
                                     //close the game if they  run out of money
-                                    if( MessageBox.Show( "You have ran out of money.  Thank you for Playing.", "Out of Money!", MessageBoxButton.OK, MessageBoxImage.Exclamation ) == MessageBoxResult.OK )
+                                    if( MessageBox.Show( "You have ran out of money. \n  Thank you for Playing.", "Out of Money!", MessageBoxButton.OK, MessageBoxImage.Exclamation ) == MessageBoxResult.OK )
                                     {
                                         showClosingMsg = false;
                                         this.Close();
@@ -348,12 +354,10 @@ namespace BlackJackClient
                                 }
                                 break;
                             case HandStatusType.Push:
-                                lblStatus.Content = "Push, Nobody wins";
+                                lblStatus.Content = "\n\t\tYou Push.";
                                 break;
                             default:
-                                //if( player.isNewPlayer )
-                                //    lblStatus.Content = "Game currently in progress. Please wait until next round";
-                                //else
+                                if( player.Status != PlayerStatusType.Playing && player.Status != PlayerStatusType.Betting )
                                     lblStatus.Content = "";
                                 break;
                         }
@@ -361,7 +365,7 @@ namespace BlackJackClient
                     else
                     {
                         //inform new players that the game is in progress
-                        lblStatus.Content = "Game currently in progress. Please wait until next round";
+                        lblStatus.Content = "Game currently in progress. \n Please wait until next round";
                     }
                     
                     //update the players bank
