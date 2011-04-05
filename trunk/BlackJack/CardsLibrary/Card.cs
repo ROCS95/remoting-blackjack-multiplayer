@@ -4,9 +4,9 @@
  * Date:            February 24, 2011
  * Author:          T. Haworth
  * Description:     Represents a standard playing card.
- * Version Info:    Modified by adding the [Serializable] attribute which allows 
- *                  the Card class to be used remotely. The marshaling type
- *                  is marshal-by-value
+ * Version Info:    Modified to add card value
+ * Modifed By:      Jeramie Hallyburton
+ * Modifed Date:    March 22,2011
  */
 using System;
 using System.Linq;
