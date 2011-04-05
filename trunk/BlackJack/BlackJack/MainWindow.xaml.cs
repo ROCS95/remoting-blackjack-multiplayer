@@ -183,6 +183,8 @@ namespace BlackJackClient
                     }
                     if( player.CardTotal > 0 )
                         mainHand.lblCount.Content = player.CardTotal;
+                    else
+                        mainHand.lblCount.Content = "";
                     if( player.Status == PlayerStatusType.Playing && player.CardsInPlay.Count < 3 )
                     {
                         btnHit.IsEnabled = true;
