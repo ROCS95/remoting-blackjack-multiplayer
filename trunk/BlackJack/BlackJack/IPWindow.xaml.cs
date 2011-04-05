@@ -1,4 +1,11 @@
-﻿using System;
+﻿/*Title: BlackJackClient
+* Page: IPWindow.xaml.cs
+* Author: Brooke Thrower and Jeramie Hallyburton
+* Description: Gets the server address
+* Uses: BackJackLibrary.cs
+* Created: Mar. 22, 2011
+*/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,13 +29,13 @@ namespace BlackJackClient
         {
             InitializeComponent();
         }
-
+        //set server address
         public string Address
         {
             get { return (string)this.DataContext; }
             set { this.DataContext = value; }
         }
-
+        //set results of ok button
         private void btnOK_Click( object sender, RoutedEventArgs e )
         {
             Address = txtIP.Text;

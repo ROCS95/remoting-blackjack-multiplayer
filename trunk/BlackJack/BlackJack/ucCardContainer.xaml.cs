@@ -1,4 +1,11 @@
-﻿using System;
+﻿/*Title: BlackJackClient
+* Page: ucCardContainer.xaml.cs
+* Author: Brooke Thrower and Jeramie Hallyburton
+* Description: User control to display cards
+* Uses: BackJackLibrary.cs
+* Created: Mar. 22, 2011
+*/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,11 +38,16 @@ namespace BlackJackClient
             InitializeComponent();
             SetCard = new SetCardDelegate(setCard);
 
-        }  
-
+        }
+        /* Method Name: SetCard
+         * Purpose: displays the card image in the container
+         * Output: None
+         * Input: card- the card information
+         */
         public void setCard( Card card ) {
             string tvSuit = card.Suit.ToString().Substring(0, 1).ToLower();
             string tvRank = "";
+            //determine card image based on rank and suit of card
             switch (card.Rank)
             {
                 case Card.RankID.Ace:
@@ -50,28 +62,18 @@ namespace BlackJackClient
                     tvRank = card.Value.ToString();
                     break;
             }
+            //set image to canvas background
             ImageBrush brush = new ImageBrush();
             BitmapImage cardIm = new BitmapImage();
             cardIm.BeginInit();
             cardIm.StreamSource = Assembly.GetExecutingAssembly().GetManifestResourceStream( "BlackJackClient.img." + tvSuit + tvRank + ".png" );
             cardIm.EndInit();
-
-            brush.ImageSource = cardIm;
-            
+            brush.ImageSource = cardIm;           
             canvas1.Background = brush;
-
-            isSet_ = true;
-        }
-
-        public bool IsSet
-        {
-            get { return isSet_; }
-            set { ; }
         }
 
         public void Clear()
         {
-            isSet_ = false;
             canvas1.Background = null;
         }
     }
