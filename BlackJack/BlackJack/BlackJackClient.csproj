@@ -57,6 +57,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Callback.cs" />
+    <Compile Include="IPWindow.xaml.cs">
+      <DependentUpon>IPWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainUserHand.xaml.cs">
       <DependentUpon>MainUserHand.xaml</DependentUpon>
     </Compile>
@@ -72,6 +75,10 @@
     <Compile Include="ucSmallCardContainer.xaml.cs">
       <DependentUpon>ucSmallCardContainer.xaml</DependentUpon>
     </Compile>
+    <Page Include="IPWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainUserHand.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

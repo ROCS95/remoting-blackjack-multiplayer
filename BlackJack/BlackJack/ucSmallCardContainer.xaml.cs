@@ -16,7 +16,7 @@ using System.Drawing;
 using BlackJackLibrary;
 using System.Reflection;
 
-namespace BlackJack
+namespace BlackJackClient
 {
     /// <summary>
     /// Interaction logic for ucSmallCardContainer.xaml

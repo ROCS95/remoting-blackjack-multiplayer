@@ -13,7 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using BlackJackLibrary;
 using System.Runtime.Remoting;
-namespace BlackJack
+namespace BlackJackClient
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -21,10 +21,24 @@ namespace BlackJack
     public partial class MainWindow : Window
     {
         private Game game;
-
+        private bool showClosingMsg = true;
         public MainWindow()
         {
             InitializeComponent();
+
+            string address = "";
+
+            IPWindow ipWnd = new IPWindow();
+            ipWnd.ShowDialog();
+
+            if( ipWnd.DialogResult == true )
+            {
+                address = ipWnd.Address;
+            }
+            else
+            {
+                this.Close();
+            }
 
             try
             {
@@ -32,7 +46,7 @@ namespace BlackJack
                 RemotingConfiguration.Configure( "BlackJackClient.exe.config", false );
 
                 // Activate a game object
-                game = ( Game )Activator.GetObject( typeof( Game ), "tcp://localhost:12222/game.binary" );
+                game = ( Game )Activator.GetObject( typeof( Game ), "tcp://"+ address +":12222/game.binary" );
 
             }
             catch( Exception ex )
@@ -50,22 +64,49 @@ namespace BlackJack
             }
             else
             {
-                game.Join( txtJoin.Text, new Callback( this ) );
-                txtBank.Text = Convert.ToString( game.getPlayer(txtJoin.Text).Bank );
-                txtJoin.IsEnabled = false;
-                btnJoin.IsEnabled = false;
-                txtBid.IsEnabled = true;
+                try
+                {
+                    game.Join( txtJoin.Text, new Callback( this ) );
+                    txtBank.Text = Convert.ToString( game.getPlayer(txtJoin.Text).Bank );
+                    txtJoin.IsEnabled = false;
+                    btnJoin.IsEnabled = false;
+                    txtBid.IsEnabled = true;
+                }
+                catch( Exception ex )
+                {
+                    if( ex.Message.Equals("This Game is full") )
+                    {
+                        if( MessageBox.Show( "The current game is full! Please try again later..", "Full Game!", MessageBoxButton.OK, MessageBoxImage.Error ) == MessageBoxResult.OK )
+                        {
+                            showClosingMsg = false;
+                            this.Close();
+                        }
+                    }
+                    else if( ex.Message.Equals("Player name already exists" ))
+                    {
+                        txtJoin.Text = "";
+                        MessageBox.Show( "Player name already exists, please choose a different name.", "Name Exists", MessageBoxButton.OK, MessageBoxImage.Error );
+                    }
+                }
+                
             }
         }
 
         private void btnReady_Click( object sender, RoutedEventArgs e )
         {
-            //clear all cards
-            clearCards();
-            game.Ready( Convert.ToInt32( txtBid.Text ), txtJoin.Text );
-            txtBank.Text = Convert.ToString( game.getPlayer( txtJoin.Text ).Bank );
-            btnReady.IsEnabled = false;
-            btnDoubleDown.IsEnabled = true;
+            if( Convert.ToInt32(txtBank.Text) < Convert.ToInt32(txtBid.Text))
+            {
+                lblStatus.Content = "You must place a bet lower then your bank!";
+            }
+            else
+            {
+                //clear all cards
+                clearCards();
+                game.Ready( Convert.ToInt32( txtBid.Text ), txtJoin.Text );
+                txtBank.Text = Convert.ToString( game.getPlayer( txtJoin.Text ).Bank );
+                btnReady.IsEnabled = false;
+                btnDoubleDown.IsEnabled = true;
+            }
         }
 
         private void clearCards()
@@ -173,13 +214,28 @@ namespace BlackJack
                             break;
                         case HandStatusType.Bust:
                             lblStatus.Content = "You Bust, Sorry!";
-
+                            if( player.Bank == 0 )
+                            {
+                                if( MessageBox.Show( "You have ran out of money.  Thank you for Playing.", "Out of Money!", MessageBoxButton.OK, MessageBoxImage.Exclamation ) == MessageBoxResult.OK)
+                                {
+                                    showClosingMsg = false;
+                                    this.Close();
+                                }
+                            }
                             break;
                         case HandStatusType.Winner:
                             lblStatus.Content = "You Win This Hand!";
                             break;
                         case HandStatusType.Loser:
                             lblStatus.Content = "You Lose, Sorry!";
+                            if( player.Bank == 0 )
+                            {
+                                if( MessageBox.Show( "You have ran out of money.  Thank you for Playing.", "Out of Money!", MessageBoxButton.OK, MessageBoxImage.Exclamation ) == MessageBoxResult.OK )
+                                {
+                                    showClosingMsg = false;
+                                    this.Close();
+                                }
+                            }
                             break;
                         case HandStatusType.Push:
                             lblStatus.Content = "Push, Nobody wins";
@@ -191,8 +247,6 @@ namespace BlackJack
                                 lblStatus.Content = "";
                             break;
                     }
-                    //if (player.isNewPlayer && player.HandStatus != HandStatusType.None) //current game is over
-                      //  lblStatus.Content = "Current game is over, you may now place bet.";
                     
                     txtBank.Text = player.Bank.ToString();
                 }
@@ -242,14 +296,20 @@ namespace BlackJack
         {
             int bet;
             if( int.TryParse( txtBid.Text, out bet ) )
-                btnReady.IsEnabled = true;
+            {
+                if( bet < Convert.ToInt32( txtBank.Text ) )
+                    btnReady.IsEnabled = true;
+            }
         }
 
         private void Window_Closing( object sender, System.ComponentModel.CancelEventArgs e )
         {
-            if( MessageBox.Show( "Are you sure you want to quit?", "Closing", MessageBoxButton.YesNo, MessageBoxImage.Question ) == MessageBoxResult.Yes )
+            if( showClosingMsg )
             {
-                game.removePlayer( txtJoin.Text );
+                if( MessageBox.Show( "Are you sure you want to quit?", "Closing", MessageBoxButton.YesNo, MessageBoxImage.Question ) == MessageBoxResult.Yes )
+                {
+                    game.removePlayer( txtJoin.Text );
+                }
             }
         }
     }
