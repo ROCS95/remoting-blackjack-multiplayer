@@ -183,7 +183,7 @@ namespace BlackJackClient
                     }
                     if( player.CardTotal > 0 )
                         mainHand.lblCount.Content = player.CardTotal;
-                    if( player.Status == PlayerStatusType.Playing )
+                    if( player.Status == PlayerStatusType.Playing && player.CardsInPlay.Count < 3 )
                     {
                         btnHit.IsEnabled = true;
                         btnStay.IsEnabled = true;
@@ -306,11 +306,13 @@ namespace BlackJackClient
         {
             if( showClosingMsg )
             {
-                if( MessageBox.Show( "Are you sure you want to quit?", "Closing", MessageBoxButton.YesNo, MessageBoxImage.Question ) == MessageBoxResult.Yes )
+                if( MessageBox.Show( "Are you sure you want to quit?", "Closing", MessageBoxButton.YesNo, MessageBoxImage.Question ) == MessageBoxResult.No )
                 {
-                    game.removePlayer( txtJoin.Text );
+                    return;
                 }
             }
+            game.removePlayer( txtJoin.Text );
+            this.Close();
         }
     }
 }
