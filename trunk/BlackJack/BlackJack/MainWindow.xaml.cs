@@ -37,6 +37,7 @@ namespace BlackJackClient
             }
             else
             {
+                showClosingMsg = false;
                 this.Close();
             }
 
@@ -185,11 +186,12 @@ namespace BlackJackClient
                         mainHand.lblCount.Content = player.CardTotal;
                     else
                         mainHand.lblCount.Content = "";
-                    if( player.Status == PlayerStatusType.Playing && player.CardsInPlay.Count < 3 )
+                    if( player.Status == PlayerStatusType.Playing )
                     {
                         btnHit.IsEnabled = true;
                         btnStay.IsEnabled = true;
-                        btnDoubleDown.IsEnabled = true;
+                        if(player.CardsInPlay.Count < 3)
+                            btnDoubleDown.IsEnabled = true;
                         btnReady.IsEnabled = false;
                         txtBid.IsEnabled = true;
                     }
@@ -200,54 +202,73 @@ namespace BlackJackClient
                         btnDoubleDown.IsEnabled = false;
                         txtBid.IsEnabled = false;
                     }
-                    else
+                    else if( player.Status == PlayerStatusType.Done && !player.isNewPlayer )
                     {
                         btnHit.IsEnabled = false;
                         btnStay.IsEnabled = false;
                         btnDoubleDown.IsEnabled = false;
                         txtBid.IsEnabled = true;
-                        btnReady.IsEnabled = !String.IsNullOrEmpty( txtBid.Text ) && player.Status != PlayerStatusType.Ready;
+                        btnReady.IsEnabled = true;
                     }
-
-                    switch (player.HandStatus)
+                    else if( player.Status == PlayerStatusType.Betting )
                     {
-                        case HandStatusType.BlackJack:
-                            lblStatus.Content = "BlackJack!";
-                            break;
-                        case HandStatusType.Bust:
-                            lblStatus.Content = "You Bust, Sorry!";
-                            if( player.Bank == 0 )
-                            {
-                                if( MessageBox.Show( "You have ran out of money.  Thank you for Playing.", "Out of Money!", MessageBoxButton.OK, MessageBoxImage.Exclamation ) == MessageBoxResult.OK)
+                        btnHit.IsEnabled = false;
+                        btnStay.IsEnabled = false;
+                        btnDoubleDown.IsEnabled = false;
+                        txtBid.IsEnabled = true;
+                        btnReady.IsEnabled = false;
+                    }
+                    else
+                    {
+                        btnHit.IsEnabled = false;
+                        btnStay.IsEnabled = false;
+                        btnDoubleDown.IsEnabled = false;
+                        txtBid.IsEnabled = false;
+                        btnReady.IsEnabled = false;
+
+                    }
+                    if( !player.isNewPlayer )
+                    {
+                        switch( player.HandStatus )
+                        {
+                            case HandStatusType.BlackJack:
+                                lblStatus.Content = "BlackJack!";
+                                break;
+                            case HandStatusType.Bust:
+                                lblStatus.Content = "You Bust, Sorry!";
+                                if( player.Bank == 0 )
                                 {
-                                    showClosingMsg = false;
-                                    this.Close();
+                                    if( MessageBox.Show( "You have ran out of money.  Thank you for Playing.", "Out of Money!", MessageBoxButton.OK, MessageBoxImage.Exclamation ) == MessageBoxResult.OK )
+                                    {
+                                        showClosingMsg = false;
+                                        this.Close();
+                                    }
                                 }
-                            }
-                            break;
-                        case HandStatusType.Winner:
-                            lblStatus.Content = "You Win This Hand!";
-                            break;
-                        case HandStatusType.Loser:
-                            lblStatus.Content = "You Lose, Sorry!";
-                            if( player.Bank == 0 )
-                            {
-                                if( MessageBox.Show( "You have ran out of money.  Thank you for Playing.", "Out of Money!", MessageBoxButton.OK, MessageBoxImage.Exclamation ) == MessageBoxResult.OK )
+                                break;
+                            case HandStatusType.Winner:
+                                lblStatus.Content = "You Win This Hand!";
+                                break;
+                            case HandStatusType.Loser:
+                                lblStatus.Content = "You Lose, Sorry!";
+                                if( player.Bank == 0 )
                                 {
-                                    showClosingMsg = false;
-                                    this.Close();
+                                    if( MessageBox.Show( "You have ran out of money.  Thank you for Playing.", "Out of Money!", MessageBoxButton.OK, MessageBoxImage.Exclamation ) == MessageBoxResult.OK )
+                                    {
+                                        showClosingMsg = false;
+                                        this.Close();
+                                    }
                                 }
-                            }
-                            break;
-                        case HandStatusType.Push:
-                            lblStatus.Content = "Push, Nobody wins";
-                            break;
-                        default:
-                            if( player.isNewPlayer )
-                                lblStatus.Content = "Game currently in progress. Please wait until next round";
-                            else
-                                lblStatus.Content = "";
-                            break;
+                                break;
+                            case HandStatusType.Push:
+                                lblStatus.Content = "Push, Nobody wins";
+                                break;
+                            default:
+                                if( player.isNewPlayer )
+                                    lblStatus.Content = "Game currently in progress. Please wait until next round";
+                                else
+                                    lblStatus.Content = "";
+                                break;
+                        }
                     }
                     
                     txtBank.Text = player.Bank.ToString();
@@ -310,11 +331,11 @@ namespace BlackJackClient
             {
                 if( MessageBox.Show( "Are you sure you want to quit?", "Closing", MessageBoxButton.YesNo, MessageBoxImage.Question ) == MessageBoxResult.No )
                 {
+                    e.Cancel = true;
                     return;
                 }
             }
             game.removePlayer( txtJoin.Text );
-            this.Close();
         }
     }
 }

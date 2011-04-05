@@ -22,7 +22,7 @@
             <cust:MainUserHand Canvas.Left="240" Canvas.Top="186" x:Name="mainHand" />
             <Button Canvas.Left="274" Canvas.Top="377" Content="Stay" Height="23" Name="btnStay" Width="44" Click="btnStay_Click" IsEnabled="False" />
             <Button Canvas.Left="324" Canvas.Top="377" Content="Hit" Height="23" Name="btnHit" Width="44" Click="btnHit_Click" IsEnabled="False" />
-            <TextBox Height="23" Name="txtJoin" Width="133" Canvas.Left="522" Canvas.Top="200" />
+            <TextBox Height="23" Name="txtJoin" Width="133" Canvas.Left="522" Canvas.Top="200" AcceptsReturn="False" />
             <Button Content="Join" Height="23" Name="btnJoin" Width="75" Click="btnJoin_Click" Canvas.Left="550" Canvas.Top="237" />
             <Button Content="Ready" Height="23" Name="btnReady" Width="75" Click="btnReady_Click" Canvas.Left="550" Canvas.Top="377" IsEnabled="False" />
             <Label Canvas.Left="511" Canvas.Top="338" Content="Bid:" Height="29" Name="label1" Foreground="White" FontWeight="Bold" />
