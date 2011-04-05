@@ -21,7 +21,7 @@
             <cust:ucOtherPlayerHand Canvas.Left="466" Canvas.Top="80" x:Name="PlayerContainer4" Visibility="Hidden" Height="70" />
             <cust:MainUserHand Canvas.Left="240" Canvas.Top="212" x:Name="mainHand" />
             <Button Canvas.Left="274" Canvas.Top="402" Content="Stay" Height="23" Name="btnStay" Width="44" Click="btnStay_Click" IsEnabled="False" />
-            <Button Canvas.Left="324" Canvas.Top="402" Content="Hit" Height="23" Name="btnHit" Width="44" Click="btnHit_Click" IsEnabled="False" />
+            <Button Canvas.Left="340" Canvas.Top="402" Content="Hit" Height="23" Name="btnHit" Width="44" Click="btnHit_Click" IsEnabled="False" />
             <TextBox Height="23" Name="txtJoin" Width="133" Canvas.Left="522" Canvas.Top="200" AcceptsReturn="False" />
             <Button Content="Join" Height="23" Name="btnJoin" Width="75" Click="btnJoin_Click" Canvas.Left="550" Canvas.Top="237" />
             <Button Content="Ready" Height="23" Name="btnReady" Width="75" Click="btnReady_Click" Canvas.Left="550" Canvas.Top="377" IsEnabled="False" />
@@ -29,7 +29,7 @@
             <TextBox Canvas.Left="550" Canvas.Top="338" Height="23" Name="txtBid" Width="83" IsEnabled="False" TextChanged="txtBid_TextChanged" />
             <Label Canvas.Left="511" Canvas.Top="293" Content="Bank:" FontWeight="Bold" Foreground="White" Height="29" Name="label2" />
             <TextBox Canvas.Left="550" Canvas.Top="297" Height="23" Name="txtBank" Width="83" IsEnabled="True" IsReadOnly="True" />
-            <Label Canvas.Left="201" Canvas.Top="143" Content="" Height="63" Name="lblStatus" FontWeight="Bold" FontSize="14" Foreground="#FFF8F8F8" Width="315" />
+            <Label Canvas.Left="210" Canvas.Top="143" Height="71" Name="lblStatus" FontWeight="Bold" FontSize="14" Foreground="#FFF8F8F8" Width="294" HorizontalContentAlignment="Center" />
         </Canvas>
     </Grid>
 </Window>

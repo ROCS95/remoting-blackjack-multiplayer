@@ -58,8 +58,11 @@ namespace BlackJackClient
                     game = ( Game )Activator.GetObject( typeof( Game ), "tcp://" + address + ":12222/game.binary" );
 
                     connected = game.testConnection();
+
+                    lblStatus.Content = "Please enter a name and click join";
+
                 }
-                catch( Exception ex )
+                catch( Exception )
                 {
                     MessageBox.Show( "Could not connect to the server! Please try again later..", "Cannot Connect!", MessageBoxButton.OK, MessageBoxImage.Error );
                     this.Close();
@@ -152,7 +155,6 @@ namespace BlackJackClient
         {
             //add a card to the current hand
             game.Hit( txtJoin.Text );
-            //btnDoubleDown.IsEnabled = false;
         }
 
         //Do not allow the player to do anything on button click
@@ -236,6 +238,13 @@ namespace BlackJackClient
             //flip the first card and display the dealer total
             DealerHand.card1.SetCard( game.GetPlayer( "Dealer" ).CardsInPlay[0] );
             DealerHand.lblDealerCount.Content = game.GetPlayer( "Dealer" ).CardTotal;
+            //close the game if they  run out of money
+            if( game.GetPlayer( txtJoin.Text ).Bank == 0 )
+            {
+                MessageBox.Show( "You have ran out of money. \n Thank you for Playing.", "Out of Money", MessageBoxButton.OK, MessageBoxImage.Exclamation );
+                showClosingMsg = false;
+                this.Close();
+            }
         }
 
         /* Method Name: updateClientWindow
@@ -279,11 +288,13 @@ namespace BlackJackClient
                     //disable and enable buttons based on players status
                     if( player.Status == PlayerStatusType.Playing )
                     {
-                        lblStatus.Content = "\n\t\tYour Turn";
+                        lblStatus.Content = "\nYour Turn";
                         btnHit.IsEnabled = true;
                         btnStay.IsEnabled = true;
                         if(player.CardsInPlay.Count < 3)
                             btnDoubleDown.IsEnabled = true;
+                        else
+                            btnDoubleDown.IsEnabled = false;
                         btnReady.IsEnabled = false;
                         txtBid.IsEnabled = false;
                     }
@@ -312,7 +323,7 @@ namespace BlackJackClient
                         btnDoubleDown.IsEnabled = false;
                         txtBid.IsEnabled = true;
                         txtBid.Background = Brushes.Yellow;
-                        lblStatus.Content = "\n\tPlease place your bet";
+                        lblStatus.Content = "\nPlease place your bet";
                         if( txtBid.Text == "" || txtBid.Text == null )
                             btnReady.IsEnabled = false;
                         else
@@ -334,37 +345,19 @@ namespace BlackJackClient
                         switch( player.HandStatus )
                         {
                             case HandStatusType.BlackJack:
-                                lblStatus.Content = "\n\t\tBlackJack!";
+                                lblStatus.Content = "\nBlackJack!\nPlease place your next bet";
                                 break;
                             case HandStatusType.Bust:
-                                lblStatus.Content = "\n\t\tSorry, You Bust";
-                                //close the game if they  run out of money
-                                if( player.Bank == 0 )
-                                {
-                                    if( MessageBox.Show( "You have ran out of money. \n Thank you for Playing.", "Out of Money", MessageBoxButton.OK, MessageBoxImage.Exclamation ) == MessageBoxResult.OK )
-                                    {
-                                        showClosingMsg = false;
-                                        this.Close();
-                                    }
-                                }
+                                lblStatus.Content = "\nSorry, You Bust\nPlease place your next bet";
                                 break;
                             case HandStatusType.Winner:
-                                lblStatus.Content = "\nWinner, Winner, Chicken Dinner!";
+                                lblStatus.Content = "\nWinner, Winner, Chicken Dinner!\nPlease place your next bet";
                                 break;
                             case HandStatusType.Loser:
-                                lblStatus.Content = "\n\tSorry, Dealer Wins";
-                                if( player.Bank == 0 )
-                                {
-                                    //close the game if they  run out of money
-                                    if( MessageBox.Show( "You have ran out of money. \n  Thank you for Playing.", "Out of Money!", MessageBoxButton.OK, MessageBoxImage.Exclamation ) == MessageBoxResult.OK )
-                                    {
-                                        showClosingMsg = false;
-                                        this.Close();
-                                    }
-                                }
+                                lblStatus.Content = "\nSorry, Dealer Wins\nPlease place your next bet";
                                 break;
                             case HandStatusType.Push:
-                                lblStatus.Content = "\n\t\tYou Push";
+                                lblStatus.Content = "\nPush\nPlease place your next bet";
                                 break;
                             default:
                                 if( player.Status != PlayerStatusType.Playing && player.Status != PlayerStatusType.Betting )
