@@ -297,6 +297,15 @@ namespace BlackJackClient
                     otherPlayerHand.lblPlrName.Content = player.Name;
                     otherPlayerHand.lblBank.Content = player.Bank;
                     otherPlayerHand.lblBid.Content = player.CurrentBet;
+                    if( player.Status == PlayerStatusType.Playing )
+                    {
+                        otherPlayerHand.lblPlrName.Foreground = Brushes.Aqua;
+                    }
+                    else
+                    {
+                        otherPlayerHand.lblPlrName.Foreground = Brushes.White;
+                    }
+                        
 
                     for( int i = 0; i != player.CardsInPlay.Count; ++i )
                     {
