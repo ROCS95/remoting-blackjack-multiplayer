@@ -1,4 +1,5 @@
 ﻿/*Title: BlackJackClient
+* Page: MainWindow.xaml.cs
 * Author: Brooke Thrower and Jeramie Hallyburton
 * Description: The Client used to display a GUI for users to play a basic BlackJack game
 * Uses: BackJackLibrary.cs
@@ -88,7 +89,7 @@ namespace BlackJackClient
                     //try to join the game
                     game.Join( txtJoin.Text, new Callback( this ) );
                     //get the Bank information of the client and update the window information
-                    txtBank.Text = Convert.ToString( game.getPlayer(txtJoin.Text).Bank );
+                    txtBank.Text = Convert.ToString( game.GetPlayer(txtJoin.Text).Bank );
                     txtJoin.IsEnabled = false;
                     btnJoin.IsEnabled = false;
                     txtBid.IsEnabled = true;
@@ -145,7 +146,7 @@ namespace BlackJackClient
                 clearCards();
                 //set player to the ready status and update the client information
                 game.Ready( Convert.ToInt32( txtBid.Text ), txtJoin.Text );
-                txtBank.Text = Convert.ToString( game.getPlayer( txtJoin.Text ).Bank );
+                txtBank.Text = Convert.ToString( game.GetPlayer( txtJoin.Text ).Bank );
             }
         }
 
@@ -169,7 +170,6 @@ namespace BlackJackClient
         {
             //add a card, set current player to done and move to next player
             game.DoubleDown( txtJoin.Text );
-            txtBid.Text = game.getPlayer( txtJoin.Text ).CurrentBet.ToString();
         }
 
         //determine what to do when closing the window
@@ -188,7 +188,7 @@ namespace BlackJackClient
             //remove the player from the game
             if( game != null )
             {
-                game.removePlayer( txtJoin.Text );
+                game.RemovePlayer( txtJoin.Text );
             }
         }
 
@@ -237,8 +237,8 @@ namespace BlackJackClient
         private void finishGame()
         {
             //flip the first card and display the dealer total
-            DealerHand.card1.SetCard( game.getPlayer( "Dealer" ).CardsInPlay[0] );
-            DealerHand.lblDealerCount.Content = game.getPlayer( "Dealer" ).CardTotal;
+            DealerHand.card1.SetCard( game.GetPlayer( "Dealer" ).CardsInPlay[0] );
+            DealerHand.lblDealerCount.Content = game.GetPlayer( "Dealer" ).CardTotal;
         }
 
         /* Method Name: updateClientWindow
