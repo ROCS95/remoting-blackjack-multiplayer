@@ -42,6 +42,11 @@ namespace BlackJackLibrary
             GetPlayer( "Dealer" ).Status = PlayerStatusType.Ready;
         }
 
+        public bool testConnection()
+        {
+            return true;
+        }
+
         /* Method Name: Join
          * Purpose: adds the player to the game
          * Output: None
@@ -263,7 +268,7 @@ namespace BlackJackLibrary
                 //infinate loop to, mark next player in list to play //should always break out at as dealer is last and will always be ready
                 for( ; ; )
                 {
-                    if( players[players.IndexOf( currentPlayer ) + 1].Status == PlayerStatusType.Ready )
+                    if( players[players.IndexOf( currentPlayer ) + 1].Status == PlayerStatusType.Ready || players[players.IndexOf( currentPlayer ) + 1].Name.Equals( "Dealer" ) )
                     {
                         players[players.IndexOf( currentPlayer ) + 1].Status = PlayerStatusType.Playing;
                         //record to the server console
@@ -272,13 +277,6 @@ namespace BlackJackLibrary
                     }
                     else
                     {
-                        //check if next player is dealer
-                        if( players[players.IndexOf( currentPlayer ) + 1].Name.Equals( "Dealer" ) )
-                        {
-                            players[players.IndexOf( currentPlayer ) + 1].Status = PlayerStatusType.Playing;
-                            //record to the server console
-                            Console.WriteLine( "Player {0} is now Playing.", players[players.IndexOf( currentPlayer ) + 1].Name );
-                        }
                         //set next player to be the current player
                         currentPlayer = players[players.IndexOf( currentPlayer ) + 1];
                     }
