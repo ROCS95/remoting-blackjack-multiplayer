@@ -94,6 +94,9 @@ namespace BlackJackLibrary
          */
         public void Ready( int bet, string name )
         {
+            //reset round finished flag
+            isRoundFinished = false;
+
             //check if shoe is low
             if( shoe.NumCards < players.Count * 5 )
                 shoe.Shuffle();
@@ -128,7 +131,6 @@ namespace BlackJackLibrary
                 players[0].Status = PlayerStatusType.Playing;
                 Console.WriteLine( "Player {0} is now Playing.", players[0].Name );
                 isGameInPlay = true;
-                isRoundFinished = false;
                 dealStartingPlayerCards();
             }
             else
@@ -509,5 +511,6 @@ namespace BlackJackLibrary
                 if( !player.Name.Equals( "Dealer" ) )
                     callbacks[player.Name].PlayerUpdate( players );
         }
+
     }
 }
