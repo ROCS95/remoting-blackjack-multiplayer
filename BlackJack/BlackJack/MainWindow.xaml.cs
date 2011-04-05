@@ -216,7 +216,10 @@ namespace BlackJackClient
                         btnStay.IsEnabled = false;
                         btnDoubleDown.IsEnabled = false;
                         txtBid.IsEnabled = true;
-                        btnReady.IsEnabled = false;
+                        if( txtBid.Text == "" || txtBid.Text == null )
+                            btnReady.IsEnabled = false;
+                        else
+                            btnReady.IsEnabled = true;
                     }
                     else
                     {
