@@ -282,7 +282,7 @@ namespace BlackJackClient
                     //disable and enable buttons based on players status
                     if( player.Status == PlayerStatusType.Playing )
                     {
-                        lblStatus.Content = "\n\t\tYour Turn!";
+                        lblStatus.Content = "\n\t\tYour Turn";
                         btnHit.IsEnabled = true;
                         btnStay.IsEnabled = true;
                         if(player.CardsInPlay.Count < 3)
@@ -315,7 +315,7 @@ namespace BlackJackClient
                         btnDoubleDown.IsEnabled = false;
                         txtBid.IsEnabled = true;
                         txtBid.Background = Brushes.Yellow;
-                        lblStatus.Content = "Please place your bet!";
+                        lblStatus.Content = "\n\tPlease place your bet";
                         if( txtBid.Text == "" || txtBid.Text == null )
                             btnReady.IsEnabled = false;
                         else
@@ -340,11 +340,11 @@ namespace BlackJackClient
                                 lblStatus.Content = "\n\t\tBlackJack!";
                                 break;
                             case HandStatusType.Bust:
-                                lblStatus.Content = "\n\t\tSorry, You Bust!";
+                                lblStatus.Content = "\n\t\tSorry, You Bust";
                                 //close the game if they  run out of money
                                 if( player.Bank == 0 )
                                 {
-                                    if( MessageBox.Show( "You have ran out of money. \n Thank you for Playing.", "Out of Money!", MessageBoxButton.OK, MessageBoxImage.Exclamation ) == MessageBoxResult.OK )
+                                    if( MessageBox.Show( "You have ran out of money. \n Thank you for Playing.", "Out of Money", MessageBoxButton.OK, MessageBoxImage.Exclamation ) == MessageBoxResult.OK )
                                     {
                                         showClosingMsg = false;
                                         this.Close();
@@ -355,7 +355,7 @@ namespace BlackJackClient
                                 lblStatus.Content = "\nWinner, Winner, Chicken Dinner!";
                                 break;
                             case HandStatusType.Loser:
-                                lblStatus.Content = "\tSorry, Dealer Win!";
+                                lblStatus.Content = "\n\tSorry, Dealer Wins";
                                 if( player.Bank == 0 )
                                 {
                                     //close the game if they  run out of money
@@ -367,7 +367,7 @@ namespace BlackJackClient
                                 }
                                 break;
                             case HandStatusType.Push:
-                                lblStatus.Content = "\n\t\tYou Push.";
+                                lblStatus.Content = "\n\t\tYou Push";
                                 break;
                             default:
                                 if( player.Status != PlayerStatusType.Playing && player.Status != PlayerStatusType.Betting )
