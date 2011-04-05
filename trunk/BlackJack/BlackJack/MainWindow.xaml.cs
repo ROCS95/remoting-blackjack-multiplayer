@@ -1,4 +1,4 @@
-﻿/*Title: BlackJack Client
+﻿/*Title: BlackJackClient
 * Author: Brooke Thrower and Jeramie Hallyburton
 * Description: The Client used to display a GUI for users to play a basic BlackJack game
 * Uses: BackJackLibrary.cs
