@@ -56,6 +56,16 @@ namespace BlackJackClient
                 // Activate a game object
                 game = ( Game )Activator.GetObject( typeof( Game ), "tcp://"+ address +":12222/game.binary" );
 
+                if( game == null )
+                {
+                    if( MessageBox.Show( "Error: Could not connect to the server provided", "Error", MessageBoxButton.OK, MessageBoxImage.Error ) == MessageBoxResult.OK )
+                    {
+                        showClosingMsg = false;
+                        this.Close();
+                    }        
+                }
+                
+
             }
             catch( Exception ex )
             {
@@ -176,7 +186,10 @@ namespace BlackJackClient
                 }
             }
             //remove the player from the game
-            game.removePlayer( txtJoin.Text );
+            if( game != null )
+            {
+                game.removePlayer( txtJoin.Text );
+            }
         }
 
 
