@@ -334,7 +334,7 @@ namespace BlackJackLibrary
                     }
                     else if( p.CardTotal == 21 )
                     {
-                        //end current hand
+                        //end players hands
                         p.Status = PlayerStatusType.Done;
                         p.HandStatus = HandStatusType.BlackJack;
                     }
@@ -493,6 +493,9 @@ namespace BlackJackLibrary
                         }
                     }
                 }
+                //ensures no negative bank values
+                if( p.Bank < 0 )
+                    p.Bank = 0;
                 //set new players to playing for next round
                 if( p.isNewPlayer )
                     p.isNewPlayer = false;
