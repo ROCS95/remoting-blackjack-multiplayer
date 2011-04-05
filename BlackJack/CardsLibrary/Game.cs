@@ -158,7 +158,9 @@ namespace BlackJackLibrary
             currentPlayer = getPlayer( name );
             dealCards( 1 );
             Console.WriteLine( "Player: " + name + " doubled down." );
+            currentPlayer.Bank -= currentPlayer.CurrentBet;
             currentPlayer.CurrentBet *= 2;
+             
             updateAllClients();
             currentPlayer.Status = PlayerStatusType.Done;
             if( currentPlayer != players[players.Count - 1] )
@@ -185,13 +187,17 @@ namespace BlackJackLibrary
         {
             try
             {
-                if( getPlayer( name ).Status == PlayerStatusType.Playing )
+                if( getPlayer(name) != null )
                 {
-                    players[players.IndexOf( currentPlayer ) + 1].Status = PlayerStatusType.Playing;
-                    Console.WriteLine( "Player: {0} is now Playing.", players[players.IndexOf( currentPlayer ) + 1].Name );
+                    if( getPlayer( name ).Status == PlayerStatusType.Playing )
+                    {
+                        players[players.IndexOf( currentPlayer ) + 1].Status = PlayerStatusType.Playing;
+                        Console.WriteLine( "Player {0} is now Playing.", players[players.IndexOf( currentPlayer ) + 1].Name );
+                    }
+                    callbacks.Remove( name );
+                    players.Remove( getPlayer( name ) );
+                    Console.WriteLine( "Player {0} has left the game", name );
                 }
-                players.Remove( getPlayer( name ) );
-                Console.WriteLine( "Player:" + name + " has left the game" );
             }
             catch( Exception ex )
             {
@@ -266,7 +272,7 @@ namespace BlackJackLibrary
                             foreach( Player player in players )
                             {
                                 player.Status = PlayerStatusType.Done;
-                                if( player.HandStatus != HandStatusType.BlackJack)
+                                if( player.HandStatus != HandStatusType.BlackJack && !player.isNewPlayer)
                                     player.HandStatus = HandStatusType.Loser;
                             }
                             determinePayouts();
@@ -435,6 +441,11 @@ namespace BlackJackLibrary
                     }
                 }
             }
+        }
+
+        private void nextPlayer()
+        {
+
         }
 
     }
