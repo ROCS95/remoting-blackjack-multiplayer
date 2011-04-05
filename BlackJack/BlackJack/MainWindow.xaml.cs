@@ -29,10 +29,16 @@ namespace BlackJackClient
     {
         private Game game;
         private bool showClosingMsg = true;
+        private bool connected = false;
         public MainWindow()
         {
             InitializeComponent();
 
+            connectToServer();
+        }
+
+        private void connectToServer()
+        {
             string address = "";
 
             //display a window to get the address of the server before beginning the game
@@ -42,35 +48,26 @@ namespace BlackJackClient
             if( ipWnd.DialogResult == true )
             {
                 address = ipWnd.Address;
+
+                try
+                {
+                    // Load the remoting configuration file
+                    RemotingConfiguration.Configure( "BlackJackClient.exe.config", false );
+
+                    // Activate a game object
+                    game = ( Game )Activator.GetObject( typeof( Game ), "tcp://" + address + ":12222/game.binary" );
+
+                    connected = game.testConnection();
+                }
+                catch( Exception ex )
+                {
+                    MessageBox.Show( "Could not connect to the server! Please try again later..", "Cannot Connect!", MessageBoxButton.OK, MessageBoxImage.Error );
+                    this.Close();
+                }
             }
             else
             {
-                showClosingMsg = false;
                 this.Close();
-            }
-
-            try
-            {
-                // Load the remoting configuration file
-                RemotingConfiguration.Configure( "BlackJackClient.exe.config", false );
-
-                // Activate a game object
-                game = ( Game )Activator.GetObject( typeof( Game ), "tcp://"+ address +":12222/game.binary" );
-
-                if( game == null )
-                {
-                    if( MessageBox.Show( "Error: Could not connect to the server provided", "Error", MessageBoxButton.OK, MessageBoxImage.Error ) == MessageBoxResult.OK )
-                    {
-                        showClosingMsg = false;
-                        this.Close();
-                    }        
-                }
-                
-
-            }
-            catch( Exception ex )
-            {
-                MessageBox.Show( ex.Message );
             }
         }
 
@@ -175,19 +172,19 @@ namespace BlackJackClient
         //determine what to do when closing the window
         private void Window_Closing( object sender, System.ComponentModel.CancelEventArgs e )
         {
-            if( showClosingMsg )
+            if( connected )
             {
-                //make sure the player wants to leave the game
-                if( MessageBox.Show( "Are you sure you want to quit?", "Closing", MessageBoxButton.YesNo, MessageBoxImage.Question ) == MessageBoxResult.No )
+                if( showClosingMsg )
                 {
-                    //cancel the closing if they don't want to leave
-                    e.Cancel = true;
-                    return;
+                    //make sure the player wants to leave the game
+                    if( MessageBox.Show( "Are you sure you want to quit?", "Closing", MessageBoxButton.YesNo, MessageBoxImage.Question ) == MessageBoxResult.No )
+                    {
+                        //cancel the closing if they don't want to leave
+                        e.Cancel = true;
+                        return;
+                    }
                 }
-            }
-            //remove the player from the game
-            if( game != null )
-            {
+                //remove the player from the game
                 game.RemovePlayer( txtJoin.Text );
             }
         }
@@ -250,7 +247,7 @@ namespace BlackJackClient
 
         public void UpdateClientWindow( List<Player> players )
         {
-            txtJoin.Dispatcher.BeginInvoke( new ClientUpdateDelegate( updateClientWindow ), players );
+            this.Dispatcher.BeginInvoke( new ClientUpdateDelegate( updateClientWindow ), players );
         }
 
         private void updateClientWindow( List<Player> players )
