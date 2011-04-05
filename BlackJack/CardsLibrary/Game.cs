@@ -1,8 +1,7 @@
 ﻿/*Title: BlackJackLibrary
 * Page: Game.cs
 * Author: Brooke Thrower and Jeramie Hallyburton
-* Description: The Client used to display a GUI for users to play a basic BlackJack game
-* Uses: BackJackLibrary.cs
+* Description: returns information to the client about the game in play
 * Created: Mar. 22, 2011
 */
 using System;
@@ -40,111 +39,157 @@ namespace BlackJackLibrary
         public Game()
         {
             players.Add( new Player( "Dealer" ) );
-            getPlayer( "Dealer" ).Status = PlayerStatusType.Ready;
+            GetPlayer( "Dealer" ).Status = PlayerStatusType.Ready;
         }
 
+        /* Method Name: Join
+         * Purpose: adds the player to the game
+         * Output: None
+         * Input: string name - name of the player being added, callback
+         */
         public void Join( string name, ICallback callback )
         {
             foreach( Player p in players )
             {
+                //check if the player name exists in the game or not
                 if( name.Equals( p.Name ) )
                 {
                     throw new Exception( "Player name already exists" );
                 }
             }
-
+            //make sure the game is not full
             if( players.Count < 6 )
             {
                 Player newPlayer = new Player( name );
                 players.Insert( 0, newPlayer );
                 callbacks.Add( name, callback );
 
+                //check if the game is in play
                 if( isGameInPlay )
                 {
                     newPlayer.Status = PlayerStatusType.Done;
                     newPlayer.isNewPlayer = true;
                 }
+                //report to server
                 Console.WriteLine( "Player {0} has just joined the game.", newPlayer.Name );
                 updateAllClients();
             }
             else
             {
+                //report to server window if player could not join
                 Console.WriteLine( "Game is full {0} could not join.", name );
                 throw new Exception( "This Game is full" );
             }
         }
 
+        /* Method Name: Ready
+         * Purpose: Track if players are ready for the hand and start hand
+         * Output: None
+         * Input: int bet - players current bet, string name - current players name
+         */
         public void Ready( int bet, string name )
         {
-            isGameInPlay = true;
-            isRoundFinished = false;
-
             //check if shoe is low
             if( shoe.NumCards < players.Count * 5 )
                 shoe.Shuffle();
-            Player dealer = getPlayer( "Dealer" );
+            //check dealers status and update
+            Player dealer = GetPlayer( "Dealer" );
             if( dealer.Status != PlayerStatusType.Ready )
             {
                 dealer.Status = PlayerStatusType.Ready;
                 dealer.CardsInPlay.Clear();
             }
-            currentPlayer = getPlayer( name );
+            //update current player information
+            currentPlayer = GetPlayer( name );
             currentPlayer.Status = PlayerStatusType.Ready;
             currentPlayer.HandStatus = HandStatusType.None;
             currentPlayer.CardsInPlay.Clear();
             currentPlayer.Bank -= bet;
             currentPlayer.CurrentBet = bet;
 
+            //check if players are ready
             foreach( Player p in players )
             {
                 if( p.Status != PlayerStatusType.Ready )
                     blnPlayersReady = false;
+                //reset each players hand information
                 p.HandStatus = HandStatusType.None;
                 p.CardsInPlay.Clear();
                 p.CardTotal = 0;
             }
-
+            //check if players are ready for the hand
             if( blnPlayersReady )
             {
                 players[0].Status = PlayerStatusType.Playing;
                 Console.WriteLine( "Player {0} is now Playing.", players[0].Name );
                 dealStartingPlayerCards();
+                isGameInPlay = true;
+                isRoundFinished = false;
             }
             else
             {
                 blnPlayersReady = true;
             }
             updateAllClients();
-
         }
 
+        /* Method Name: Hit
+         * Purpose: Adds a card to the current player
+         * Output: None
+         * Input: string name - current players name
+         */
         public void Hit( string name )
         {
-            currentPlayer = getPlayer( name );
+            //set the current player to the player passed in
+            currentPlayer = GetPlayer( name );
+            //record to the server console
             Console.WriteLine( "Player {0} has hit:", name );
+            //add a Card to the current players
             dealCards( 1 );
             updateAllClients();
         }
 
+        /* Method Name: Stay
+         * Purpose: Switch to next player
+         * Output: None
+         * Input: string name - current players name
+         */
         public void Stay( string name )
         {
+            //record to the server console
             Console.WriteLine( "Player {0} stays", name );
-            currentPlayer = getPlayer( name );
+            //set the current player to the player passed in
+            currentPlayer = GetPlayer( name );
             switchToNextPlayer();
         }
 
+        /* Method Name: DoubleDown
+         * Purpose: Add card to hand and end players turn
+         * Output: None
+         * Input: string name - current players name
+         */
         public void DoubleDown( string name )
         {
-            currentPlayer = getPlayer( name );
-            dealCards( 1 );
+            //set the current player to the player passed in
+            currentPlayer = GetPlayer( name );
+            //record to the server console
             Console.WriteLine( "Player: {0} has doubled down:", name );
+            //deal a card
+            dealCards( 1 );
+            //double the bet
             currentPlayer.Bank -= currentPlayer.CurrentBet;
             currentPlayer.CurrentBet *= 2;
             switchToNextPlayer();
         }
 
-        public Player getPlayer( string name )
+        /* Method Name: GetPlayer
+         * Purpose: search for the player in the game
+         * Output: None
+         * Input: string name - current players name
+         */
+        public Player GetPlayer( string name )
         {
+            //search for the player in the list of players
             foreach( Player player in players )
             {
                 if( name.Equals( player.Name ) )
@@ -152,19 +197,29 @@ namespace BlackJackLibrary
             }
             return new Player( null );
         }
-       
-        public void removePlayer( string name )
+
+        /* Method Name: RemovePlayer
+         * Purpose: Remove the player from a game
+         * Output: None
+         * Input: string name - name of the player being removed
+         */
+        public void RemovePlayer( string name )
         {
             try
             {
-                if( getPlayer( name ).Name != null )
+                //make sure the name isnt blank
+                if( name != "" )
                 {
-                    if( getPlayer( name ).Status == PlayerStatusType.Playing )
+                    //if the player is the current player then move to the next player
+                    if( GetPlayer( name ).Status == PlayerStatusType.Playing )
                     {
                         switchToNextPlayer();
                     }
+                    //remove player from callback
                     callbacks.Remove( name );
-                    players.Remove( getPlayer( name ) );
+                    //remove player from list
+                    players.Remove( GetPlayer( name ) );
+                    //record to the server console
                     Console.WriteLine( "Player {0} has left the game", name );
                 }
             }
@@ -176,42 +231,57 @@ namespace BlackJackLibrary
         }
 
         // Helper methods
+
+        /* Method Name: drawMultiple
+         * Purpose: draws a range of random cards
+         * Output: None
+         * Input: nCards = the number of cards being drawn, string name - name of the player being removed
+         */
         private List<Card> drawMultiple( int nCards, string name )
         {
             List<Card> cards = new List<Card>();
+            //draw the range of cards and add to list
             for( int i = 0; i < nCards; i++ )
             {
                 cards.Add( shoe.Draw() );
-                Console.WriteLine( "Deal: {0} to {1}", cards[i].Name, getPlayer( name ).Name );
+                //record to the server console
+                Console.WriteLine( "Deal: {0} to {1}", cards[i].Name, GetPlayer( name ).Name );
             }
-
             return cards;
         }
 
+        /* Method Name: switchToNextPlayer
+         * Purpose: Remove the player from a game
+         * Output: None
+         * Input: None
+         */
         private void switchToNextPlayer()
         {
             currentPlayer.Status = PlayerStatusType.Done;
             if( currentPlayer != players[players.Count - 1] )
             {
-                //mark next player in list to play
+                //infinate loop to, mark next player in list to play //should always break out at as dealer is last and will always be ready
                 for( ; ; )
                 {
                     if( players[players.IndexOf( currentPlayer ) + 1].Status == PlayerStatusType.Ready )
                     {
                         players[players.IndexOf( currentPlayer ) + 1].Status = PlayerStatusType.Playing;
+                        //record to the server console
                         Console.WriteLine( "Player {0} is now Playing.", players[players.IndexOf( currentPlayer ) + 1].Name );
                         break;
                     }
                     else
                     {
+                        //set next player to be the current player
                         currentPlayer = players[players.IndexOf( currentPlayer ) + 1];
                     }
                 }
             }
             updateAllClients();
-            if( getPlayer( "Dealer" ).Status == PlayerStatusType.Playing )
+            //finish the dealer hand if they are the only player left
+            if( GetPlayer( "Dealer" ).Status == PlayerStatusType.Playing )
             {
-                currentPlayer = getPlayer( "Dealer" );
+                currentPlayer = GetPlayer( "Dealer" );
                 finishDealerHand();
                 currentPlayer.Status = PlayerStatusType.Done;
                 determinePayouts();
@@ -219,14 +289,20 @@ namespace BlackJackLibrary
             }
         }
 
+        /* Method Name: dealStartingPlayerCards
+         * Purpose: deal the first to cards to all the players
+         * Output: None
+         * Input: None
+         */
         private void dealStartingPlayerCards()
         {
             foreach( Player p in players )
             {
+                //add to cards to the player
                 p.CardsInPlay.AddRange( drawMultiple( 2, p.Name ) );
+
                 //reset count
                 p.CardTotal = 0;
-
                 int aceCount = 0;
                 //get count of current cards
                 foreach( Card card in p.CardsInPlay )
@@ -235,15 +311,17 @@ namespace BlackJackLibrary
                     //check if card is ace
                     if( card.Rank == Card.RankID.Ace )
                         aceCount++;
-
+                    //check if card total is over 21(not technically possible)
                     if( p.CardTotal > 21 )
                     {
+                        //if there is an ace then set the count to -10 to set ace value to 1
                         if( aceCount > 0 )
                         {
                             p.CardTotal -= 10;
                             aceCount--;
                         }
                         else
+                            //set player to bust if they are over
                             p.HandStatus = HandStatusType.Bust;
                     }
                     else if( p.CardTotal == 21 )
@@ -256,6 +334,11 @@ namespace BlackJackLibrary
             }
         }
 
+        /* Method Name: dealCards
+         * Purpose: deal a set number of cards to the players
+         * Output: None
+         * Input: None
+         */
         private void dealCards( int nCards )
         {
             currentPlayer.CardsInPlay.AddRange( drawMultiple( nCards, currentPlayer.Name ) );
@@ -267,19 +350,21 @@ namespace BlackJackLibrary
                 //check if card is ace
                 currentPlayer.CardTotal += card.Value;
 
+                //check for possible bust
                 if( currentPlayer.CardTotal > 21 )
                 {
+                    //if card is an ace then set its value to 1
                     if( card.Rank == Card.RankID.Ace )
                     {
                         currentPlayer.CardTotal -= 10;
                     }
                     else
                     {
+                        //player bust, move to next player unless its the dealer
                         currentPlayer.Status = PlayerStatusType.Done;
                         currentPlayer.HandStatus = HandStatusType.Bust;
                         if( !currentPlayer.Name.Equals( "Dealer" ) )
                         {
-                            //mark next player in list to play
                             switchToNextPlayer();
                         }
                     }
@@ -297,6 +382,7 @@ namespace BlackJackLibrary
                 }
             }
 
+            //can't hit past 5 cards
             if( currentPlayer.CardsInPlay.Count == 5 )
             {
                 //end current hand
@@ -309,9 +395,16 @@ namespace BlackJackLibrary
             }
         }
 
+        /* Method Name: finishDealerHand
+         * Purpose: Finish the dealers hand
+         * Output: None
+         * Input: None
+         */
         private void finishDealerHand()
         {
+            //set round to done
             isRoundFinished = true;
+            //add a card to the dealers hand if under 17
             if( currentPlayer.CardTotal < 17 )
             {
                 dealCards( 1 );
@@ -319,11 +412,19 @@ namespace BlackJackLibrary
             }
         }
 
+        /* Method Name: determinePayouts
+         * Purpose: determine results for the round
+         * Output: None
+         * Input: None
+         */
         private void determinePayouts()
         {
             //Determine Payouts
+            //currentPlayer is always the dealer
             foreach( Player p in players )
             {
+                //dont update dealer or inactive(waiting) players
+                //update bank based on handStatus and rest bet
                 if( p.Name != "Dealer" && p.isNewPlayer == false )
                 {
                     if( p.HandStatus == HandStatusType.BlackJack )
@@ -369,13 +470,20 @@ namespace BlackJackLibrary
                         }
                     }
                 }
+                //set new players to playing for next round
                 if( p.isNewPlayer )
                     p.isNewPlayer = false;
             }
         }
 
+        /* Method Name: updateAllClients
+         * Purpose: update all clients with player information
+         * Output: None
+         * Input: None
+         */
         private void updateAllClients()
         {
+            //loop through each player to update
             foreach( Player player in players )
                 if( !player.Name.Equals( "Dealer" ) )
                     callbacks[player.Name].PlayerUpdate( players );
