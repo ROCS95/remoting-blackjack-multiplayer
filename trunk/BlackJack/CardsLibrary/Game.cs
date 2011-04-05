@@ -339,7 +339,7 @@ namespace BlackJackLibrary
                         p.HandStatus = HandStatusType.BlackJack;
                     }
                 }
-                if( p.Status != PlayerStatusType.Done && !p.Name.Equals("Dealer") )
+                if( p.Status != PlayerStatusType.Done && !p.Name.Equals("Dealer") && !p.isNewPlayer )
                     isPlayersDone = false;    
             }
             if( isPlayersDone )
@@ -442,46 +442,54 @@ namespace BlackJackLibrary
                 //update bank based on handStatus and rest bet
                 if( p.Name != "Dealer" && p.isNewPlayer == false )
                 {
-                    if( p.HandStatus == HandStatusType.BlackJack )
+                    if( currentPlayer.HandStatus == HandStatusType.BlackJack && p.HandStatus != HandStatusType.BlackJack )
                     {
-                        p.Bank += p.CurrentBet * 3;
+                        p.HandStatus = HandStatusType.Loser;
                         p.CurrentBet = 0;
                     }
-                    else if( p.HandStatus == HandStatusType.Bust )
+                    else
                     {
-                        p.CurrentBet = 0;
-                    }
-                    else if( currentPlayer.CardTotal <= 21 )
-                    {
-                        if( p.CardTotal > currentPlayer.CardTotal )
+                        if( p.HandStatus == HandStatusType.BlackJack )
                         {
-                            p.HandStatus = HandStatusType.Winner;
-                            p.Bank += p.CurrentBet * 2;
+                            p.Bank += p.CurrentBet * 3;
                             p.CurrentBet = 0;
                         }
-                        else if( p.CardTotal < currentPlayer.CardTotal )
+                        else if( p.HandStatus == HandStatusType.Bust )
                         {
-                            p.HandStatus = HandStatusType.Loser;
                             p.CurrentBet = 0;
                         }
-                        else if( p.CardTotal == currentPlayer.CardTotal )
+                        else if( currentPlayer.CardTotal <= 21 )
                         {
-                            p.HandStatus = HandStatusType.Push;
-                            p.Bank += p.CurrentBet;
-                            p.CurrentBet = 0;
+                            if( p.CardTotal > currentPlayer.CardTotal )
+                            {
+                                p.HandStatus = HandStatusType.Winner;
+                                p.Bank += p.CurrentBet * 2;
+                                p.CurrentBet = 0;
+                            }
+                            else if( p.CardTotal < currentPlayer.CardTotal )
+                            {
+                                p.HandStatus = HandStatusType.Loser;
+                                p.CurrentBet = 0;
+                            }
+                            else if( p.CardTotal == currentPlayer.CardTotal )
+                            {
+                                p.HandStatus = HandStatusType.Push;
+                                p.Bank += p.CurrentBet;
+                                p.CurrentBet = 0;
+                            }
                         }
-                    }
-                    else if( currentPlayer.CardTotal > 21 )
-                    {
-                        if( p.CardTotal <= 21 )
+                        else if( currentPlayer.CardTotal > 21 )
                         {
-                            p.HandStatus = HandStatusType.Winner;
-                            p.Bank += p.CurrentBet * 2;
-                            p.CurrentBet = 0;
-                        }
-                        else
-                        {
-                            p.HandStatus = HandStatusType.Loser;
+                            if( p.CardTotal <= 21 )
+                            {
+                                p.HandStatus = HandStatusType.Winner;
+                                p.Bank += p.CurrentBet * 2;
+                                p.CurrentBet = 0;
+                            }
+                            else
+                            {
+                                p.HandStatus = HandStatusType.Loser;
+                            }
                         }
                     }
                 }
