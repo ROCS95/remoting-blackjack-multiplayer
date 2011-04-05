@@ -99,8 +99,6 @@ namespace BlackJackLibrary
             {
                 if( p.Status != PlayerStatusType.Ready )
                     blnPlayersReady = false;
-                if( p.isNewPlayer )
-                    p.isNewPlayer = false;
                 p.HandStatus = HandStatusType.None;
                 p.CardsInPlay.Clear();
                 p.CardTotal = 0;
@@ -151,7 +149,7 @@ namespace BlackJackLibrary
         {
             try
             {
-                if( getPlayer(name) != null )
+                if( getPlayer( name ) != null )
                 {
                     if( getPlayer( name ).Status == PlayerStatusType.Playing )
                     {
@@ -227,14 +225,14 @@ namespace BlackJackLibrary
                             foreach( Player player in players )
                             {
                                 player.Status = PlayerStatusType.Done;
-                                if( player.HandStatus != HandStatusType.BlackJack && !player.isNewPlayer)
+                                if( player.HandStatus != HandStatusType.BlackJack && !player.isNewPlayer )
                                     player.HandStatus = HandStatusType.Loser;
                             }
                             isRoundFinished = true;
                             determinePayouts();
                             updateAllClients();
                         }
-                        
+
                     }
                 }
             }
@@ -354,10 +352,12 @@ namespace BlackJackLibrary
                         }
                     }
                 }
+                if( p.isNewPlayer )
+                    p.isNewPlayer = false;
             }
         }
 
-        private void switchToNextPlayer( )
+        private void switchToNextPlayer()
         {
             currentPlayer.Status = PlayerStatusType.Done;
             if( currentPlayer != players[players.Count - 1] )
@@ -376,26 +376,16 @@ namespace BlackJackLibrary
                         currentPlayer = players[players.IndexOf( currentPlayer ) + 1];
                     }
                 }
-
             }
-
             updateAllClients();
-
             if( getPlayer( "Dealer" ).Status == PlayerStatusType.Playing )
             {
                 currentPlayer = getPlayer( "Dealer" );
-
                 finishDealerHand();
                 currentPlayer.Status = PlayerStatusType.Done;
                 determinePayouts();
                 updateAllClients();
             }
         }
-
     }
 }
-
-
-
-
-
