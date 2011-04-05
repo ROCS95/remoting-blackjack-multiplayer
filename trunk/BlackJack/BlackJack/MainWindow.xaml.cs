@@ -247,7 +247,7 @@ namespace BlackJackClient
 
         public void UpdateClientWindow( List<Player> players )
         {
-            this.Dispatcher.BeginInvoke( new ClientUpdateDelegate( updateClientWindow ), players );
+            txtJoin.Dispatcher.BeginInvoke( new ClientUpdateDelegate( updateClientWindow ), players );
         }
 
         private void updateClientWindow( List<Player> players )
