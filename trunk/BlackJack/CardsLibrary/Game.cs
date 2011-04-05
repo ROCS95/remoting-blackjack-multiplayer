@@ -219,19 +219,19 @@ namespace BlackJackLibrary
                         //end current hand
                         p.Status = PlayerStatusType.Done;
                         p.HandStatus = HandStatusType.BlackJack;
-                        if( p.Name.Equals( "Dealer" ) )
-                        {
-                            currentPlayer = getPlayer( "Dealer" );
-                            foreach( Player player in players )
-                            {
-                                player.Status = PlayerStatusType.Done;
-                                if( player.HandStatus != HandStatusType.BlackJack && !player.isNewPlayer )
-                                    player.HandStatus = HandStatusType.Loser;
-                            }
-                            isRoundFinished = true;
-                            determinePayouts();
-                            updateAllClients();
-                        }
+                        //if( currentPlayer.Name.Equals( "Dealer" ) )
+                        //{
+                        //    currentPlayer = getPlayer( "Dealer" );
+                        //    foreach( Player player in players )
+                        //    {
+                        //        player.Status = PlayerStatusType.Done;
+                        //        if( player.HandStatus != HandStatusType.BlackJack && !player.isNewPlayer )
+                        //            player.HandStatus = HandStatusType.Loser;
+                        //    }
+                        //    isRoundFinished = true;
+                        //    determinePayouts();
+                        //    updateAllClients();
+                        //}
 
                     }
                 }
@@ -269,7 +269,6 @@ namespace BlackJackLibrary
                 }
                 else if( currentPlayer.CardTotal == 21 )
                 {
-                    currentPlayer.HandStatus = HandStatusType.Winner;
                     //end current hand
                     currentPlayer.Status = PlayerStatusType.Done;
                     if( !currentPlayer.Name.Equals( "Dealer" ) )
