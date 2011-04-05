@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using BlackJackLibrary;
 
-namespace BlackJack
+namespace BlackJackClient
 {
     public class Callback : MarshalByRefObject, ICallback
     {

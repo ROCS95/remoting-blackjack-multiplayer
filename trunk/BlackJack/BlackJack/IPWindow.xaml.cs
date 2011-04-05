@@ -9,21 +9,30 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using BlackJackLibrary;
 
 namespace BlackJackClient
 {
     /// <summary>
-    /// Interaction logic for MainUserHand.xaml
+    /// Interaction logic for ipWindow.xaml
     /// </summary>
-    public partial class MainUserHand : UserControl
+    public partial class IPWindow : Window
     {
-        public MainUserHand()
+        public IPWindow()
         {
             InitializeComponent();
-            
+        }
+
+        public string Address
+        {
+            get { return (string)this.DataContext; }
+            set { this.DataContext = value; }
+        }
+
+        private void btnOK_Click( object sender, RoutedEventArgs e )
+        {
+            Address = txtIP.Text;
+            this.DialogResult = true;
         }
     }
 }

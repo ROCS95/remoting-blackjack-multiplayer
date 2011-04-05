@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace BlackJack
+namespace BlackJackClient
 {
     /// <summary>
     /// Interaction logic for ucOtherPlayerHand.xaml

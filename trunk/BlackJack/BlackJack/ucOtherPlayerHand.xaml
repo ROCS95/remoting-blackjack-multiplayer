@@ -1,10 +1,10 @@
-﻿<UserControl x:Class="BlackJack.ucOtherPlayerHand"
+﻿<UserControl x:Class="BlackJackClient.ucOtherPlayerHand"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="66" d:DesignWidth="177" xmlns:my="clr-namespace:BlackJack">
+             d:DesignHeight="66" d:DesignWidth="177" xmlns:my="clr-namespace:BlackJackClient">
     <Grid>
         <my:ucSmallCardContainer HorizontalAlignment="Left" Margin="106,12,0,0" x:Name="card1" VerticalAlignment="Top" />
         <my:ucSmallCardContainer HorizontalAlignment="Left" Margin="113,12,0,0" x:Name="card2" VerticalAlignment="Top" />
