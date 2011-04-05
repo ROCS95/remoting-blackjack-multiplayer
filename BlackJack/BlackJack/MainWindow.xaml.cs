@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*Title: BlackJack Client
+* Author: Brooke Thrower and Jeramie Hallyburton
+* Description: The Client used to display a GUI for users to play a basic BlackJack game
+* Uses: BackJackLibrary.cs
+* Created: Mar. 22, 2011
+*/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,6 +34,7 @@ namespace BlackJackClient
 
             string address = "";
 
+            //display a window to get the address of the server before beginning the game
             IPWindow ipWnd = new IPWindow();
             ipWnd.ShowDialog();
 
@@ -56,9 +63,10 @@ namespace BlackJackClient
             }
         }
 
-
+        //Join the Game on button click
         private void btnJoin_Click( object sender, RoutedEventArgs e )
         {
+            //validate that the user put in a name
             if( txtJoin.Text.Equals( "" ) )
             {
                 MessageBox.Show( "Please Enter a Username" );
@@ -67,7 +75,9 @@ namespace BlackJackClient
             {
                 try
                 {
+                    //try to join the game
                     game.Join( txtJoin.Text, new Callback( this ) );
+                    //get the Bank information of the client and update the window information
                     txtBank.Text = Convert.ToString( game.getPlayer(txtJoin.Text).Bank );
                     txtJoin.IsEnabled = false;
                     btnJoin.IsEnabled = false;
@@ -75,6 +85,7 @@ namespace BlackJackClient
                 }
                 catch( Exception ex )
                 {
+                    //determine if the game is full
                     if( ex.Message.Equals("This Game is full") )
                     {
                         if( MessageBox.Show( "The current game is full! Please try again later..", "Full Game!", MessageBoxButton.OK, MessageBoxImage.Error ) == MessageBoxResult.OK )
@@ -83,6 +94,7 @@ namespace BlackJackClient
                             this.Close();
                         }
                     }
+                    //determine if the name being used exists
                     else if( ex.Message.Equals("Player name already exists" ))
                     {
                         txtJoin.Text = "";
@@ -93,25 +105,89 @@ namespace BlackJackClient
             }
         }
 
+        //validate bid on text change
+        private void txtBid_TextChanged( object sender, TextChangedEventArgs e )
+        {
+            //validate that the value is a number with no decimal places
+            int bet;
+            if( int.TryParse( txtBid.Text, out bet ) )
+            {
+                if( bet < Convert.ToInt32( txtBank.Text ) && bet > 0 )
+                    btnReady.IsEnabled = true;
+            }
+        }
+
+        //Set player to ready on button click
         private void btnReady_Click( object sender, RoutedEventArgs e )
         {
+            //make sure the bet is not greater then the current bank
             if( Convert.ToInt32(txtBank.Text) < Convert.ToInt32(txtBid.Text))
             {
                 lblStatus.Content = "You must place a bet lower then your bank!";
+            }
+            else if( Convert.ToInt32(txtBid.Text) <= 0)
+            {
+                lblStatus.Content = "You must place a bet higher then zero!";
             }
             else
             {
                 //clear all cards
                 clearCards();
+                //set player to the ready status and update the client information
                 game.Ready( Convert.ToInt32( txtBid.Text ), txtJoin.Text );
                 txtBank.Text = Convert.ToString( game.getPlayer( txtJoin.Text ).Bank );
-                btnReady.IsEnabled = false;
-                btnDoubleDown.IsEnabled = true;
             }
         }
 
+        //add a card to the current players hand on button click
+        private void btnHit_Click( object sender, RoutedEventArgs e )
+        {
+            //add a card to the current hand
+            game.Hit( txtJoin.Text );
+            //btnDoubleDown.IsEnabled = false;
+        }
+
+        //Do not allow the player to do anything on button click
+        private void btnStay_Click( object sender, RoutedEventArgs e )
+        {
+            //set player to done hand and move to next player
+            game.Stay( txtJoin.Text );
+        }
+
+        //add a card and do not allow the player to do anything on button click
+        private void btnDoubleDown_Click( object sender, RoutedEventArgs e )
+        {
+            //add a card, set current player to done and move to next player
+            game.DoubleDown( txtJoin.Text );
+            txtBid.Text = game.getPlayer( txtJoin.Text ).CurrentBet.ToString();
+        }
+
+        //determine what to do when closing the window
+        private void Window_Closing( object sender, System.ComponentModel.CancelEventArgs e )
+        {
+            if( showClosingMsg )
+            {
+                //make sure the player wants to leave the game
+                if( MessageBox.Show( "Are you sure you want to quit?", "Closing", MessageBoxButton.YesNo, MessageBoxImage.Question ) == MessageBoxResult.No )
+                {
+                    //cancel the closing if they don't want to leave
+                    e.Cancel = true;
+                    return;
+                }
+            }
+            //remove the player from the game
+            game.removePlayer( txtJoin.Text );
+        }
+
+
+        /* Method Name: clearCards
+         * Purpose: Removes all cards displayed on the screen
+         * Output: None
+         * Input: None
+         */
         private void clearCards()
         {
+            //loop through 6 times to clear each player containers cards
             for( int i = 1; i != 6; ++i )
             {
                 ( mainHand.FindName( "card" + i ) as ucCardContainer ).Clear();
@@ -123,22 +199,14 @@ namespace BlackJackClient
             }
         }
 
-        private void btnHit_Click( object sender, RoutedEventArgs e )
-        {
-            game.Hit( txtJoin.Text );
-            btnDoubleDown.IsEnabled = false;
-        }
-
-        private void btnStay_Click( object sender, RoutedEventArgs e )
-        {
-            game.Stay( txtJoin.Text );
-            btnHit.IsEnabled = false;
-            btnStay.IsEnabled = false;
-            btnDoubleDown.IsEnabled = false;
-        }
-
+        /* Method Name: hideWindows
+         * Purpose: hides all "windows" or (player information containers) on the current window ( deal hand, other players hands, main hand)
+         * Output: None
+         * Input: None
+         */
         private void hideWindows()
         {
+            //set all contaioners visibility to hidden
             DealerHand.Visibility = Visibility.Hidden;
             PlayerContainer1.Visibility = Visibility.Hidden;
             PlayerContainer2.Visibility = Visibility.Hidden;
@@ -148,15 +216,23 @@ namespace BlackJackClient
 
         }
 
-        private void btnDoubleDown_Click( object sender, RoutedEventArgs e )
+        /* Method Name: finishGame
+         * Purpose: Update the dealer hand to display the correct total and the first card value
+         * Output: None
+         * Input: None
+         */
+        private void finishGame()
         {
-            game.DoubleDown( txtJoin.Text);
-            txtBid.Text = game.getPlayer( txtJoin.Text ).CurrentBet.ToString();
-            btnHit.IsEnabled = false;
-            btnStay.IsEnabled = false;
-            btnDoubleDown.IsEnabled = false;
+            //flip the first card and display the dealer total
+            DealerHand.card1.SetCard( game.getPlayer( "Dealer" ).CardsInPlay[0] );
+            DealerHand.lblDealerCount.Content = game.getPlayer( "Dealer" ).CardTotal;
         }
 
+        /* Method Name: updateClientWindow
+         * Purpose: Updates all ClientWindows with the latest information
+         * Output: None
+         * Input: None
+         */
         private delegate void ClientUpdateDelegate( List<Player> players );
 
         public void UpdateClientWindow( List<Player> players )
@@ -166,26 +242,31 @@ namespace BlackJackClient
 
         private void updateClientWindow( List<Player> players )
         {
-
+            //start with blank screen
             clearCards();
             hideWindows();
 
             int otherPlayerCount = 0;
             ucOtherPlayerHand otherPlayerHand;
 
+            //loop through each player to update appropriately
             foreach( Player player in players )
             {
+                //update main window
                 if( player.Name.Equals( txtJoin.Text ) )
                 {
                     mainHand.Visibility = Visibility.Visible;
+                    //display cards on the screen
                     for( int i = 0; i != player.CardsInPlay.Count; ++i )
                     {
                         ( mainHand.FindName( "card" + ( i + 1 ) ) as ucCardContainer ).SetCard( player.CardsInPlay[i] );
                     }
+                    //only display the count if it has been set
                     if( player.CardTotal > 0 )
                         mainHand.lblCount.Content = player.CardTotal;
                     else
                         mainHand.lblCount.Content = "";
+                    //disable and enable buttons based on players status
                     if( player.Status == PlayerStatusType.Playing )
                     {
                         btnHit.IsEnabled = true;
@@ -193,7 +274,7 @@ namespace BlackJackClient
                         if(player.CardsInPlay.Count < 3)
                             btnDoubleDown.IsEnabled = true;
                         btnReady.IsEnabled = false;
-                        txtBid.IsEnabled = true;
+                        txtBid.IsEnabled = false;
                     }
                     else if (player.Status == PlayerStatusType.Done && player.isNewPlayer)
                     {
@@ -230,8 +311,10 @@ namespace BlackJackClient
                         btnReady.IsEnabled = false;
 
                     }
+                    //if the player hasn't joined mid session update the labels
                     if( !player.isNewPlayer )
                     {
+                        //display their results of the hand if its been set
                         switch( player.HandStatus )
                         {
                             case HandStatusType.BlackJack:
@@ -239,6 +322,7 @@ namespace BlackJackClient
                                 break;
                             case HandStatusType.Bust:
                                 lblStatus.Content = "You Bust, Sorry!";
+                                //close the game if they  run out of money
                                 if( player.Bank == 0 )
                                 {
                                     if( MessageBox.Show( "You have ran out of money.  Thank you for Playing.", "Out of Money!", MessageBoxButton.OK, MessageBoxImage.Exclamation ) == MessageBoxResult.OK )
@@ -255,6 +339,7 @@ namespace BlackJackClient
                                 lblStatus.Content = "You Lose, Sorry!";
                                 if( player.Bank == 0 )
                                 {
+                                    //close the game if they  run out of money
                                     if( MessageBox.Show( "You have ran out of money.  Thank you for Playing.", "Out of Money!", MessageBoxButton.OK, MessageBoxImage.Exclamation ) == MessageBoxResult.OK )
                                     {
                                         showClosingMsg = false;
@@ -266,20 +351,28 @@ namespace BlackJackClient
                                 lblStatus.Content = "Push, Nobody wins";
                                 break;
                             default:
-                                if( player.isNewPlayer )
-                                    lblStatus.Content = "Game currently in progress. Please wait until next round";
-                                else
+                                //if( player.isNewPlayer )
+                                //    lblStatus.Content = "Game currently in progress. Please wait until next round";
+                                //else
                                     lblStatus.Content = "";
                                 break;
                         }
                     }
+                    else
+                    {
+                        //inform new players that the game is in progress
+                        lblStatus.Content = "Game currently in progress. Please wait until next round";
+                    }
                     
+                    //update the players bank
                     txtBank.Text = player.Bank.ToString();
                 }
+                    //update all clients dealer information
                 else if( player.Name.Equals( "Dealer" ) )
                 {
                     DealerHand.Visibility = Visibility.Visible;
                     DealerHand.lblDealerCount.Content = "";
+                    //update dealer cards displayed
                     for( int i = 0; i != player.CardsInPlay.Count; ++i )
                     {
                         if( i == 0 )
@@ -292,14 +385,17 @@ namespace BlackJackClient
                         }
                     }
                 }
+                    //update other clients windows with current players information
                 else
                 {
                     ++otherPlayerCount;
+                    //determine what container to update and update it
                     otherPlayerHand = ( this.FindName( "PlayerContainer" + otherPlayerCount ) ) as ucOtherPlayerHand;
                     otherPlayerHand.Visibility = Visibility.Visible;
                     otherPlayerHand.lblPlrName.Content = player.Name;
                     otherPlayerHand.lblBank.Content = player.Bank;
                     otherPlayerHand.lblBid.Content = player.CurrentBet;
+                    //set the playerss name to aqua if they are the current player
                     if( player.Status == PlayerStatusType.Playing )
                     {
                         otherPlayerHand.lblPlrName.Foreground = Brushes.Aqua;
@@ -309,45 +405,16 @@ namespace BlackJackClient
                         otherPlayerHand.lblPlrName.Foreground = Brushes.White;
                     }
                         
-
+                    //diplay the cards on the screen
                     for( int i = 0; i != player.CardsInPlay.Count; ++i )
                     {
                         ( otherPlayerHand.FindName( "card" + ( i + 1 ) ) as ucSmallCardContainer ).SetCard( player.CardsInPlay[i] );
                     }
                 }
             }
-
+            //check if the game is finished
             if( game.IsRoundFinished )
                 finishGame();
-        }
-
-        private void finishGame()
-        {
-            DealerHand.card1.SetCard( game.getPlayer("Dealer").CardsInPlay[0]);
-            DealerHand.lblDealerCount.Content = game.getPlayer( "Dealer" ).CardTotal;
-        }
-
-        private void txtBid_TextChanged( object sender, TextChangedEventArgs e )
-        {
-            int bet;
-            if( int.TryParse( txtBid.Text, out bet ) )
-            {
-                if( bet < Convert.ToInt32( txtBank.Text ) )
-                    btnReady.IsEnabled = true;
-            }
-        }
-
-        private void Window_Closing( object sender, System.ComponentModel.CancelEventArgs e )
-        {
-            if( showClosingMsg )
-            {
-                if( MessageBox.Show( "Are you sure you want to quit?", "Closing", MessageBoxButton.YesNo, MessageBoxImage.Question ) == MessageBoxResult.No )
-                {
-                    e.Cancel = true;
-                    return;
-                }
-            }
-            game.removePlayer( txtJoin.Text );
         }
     }
 }
