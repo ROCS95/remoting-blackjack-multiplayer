@@ -261,6 +261,17 @@ namespace BlackJackLibrary
 
                             updateAllClients();
                         }
+                        else
+                        {
+                            foreach( Player player in players )
+                            {
+                                player.Status = PlayerStatusType.Done;
+                                if( player.HandStatus != HandStatusType.BlackJack)
+                                    player.HandStatus = HandStatusType.Loser;
+                            }
+                            determinePayouts();
+                            updateAllClients();
+                        }
                         if( getPlayer( "Dealer" ).Status == PlayerStatusType.Playing )
                         {
                             currentPlayer = getPlayer( "Dealer" );
@@ -378,7 +389,7 @@ namespace BlackJackLibrary
             //Determine Payouts
             foreach( Player p in players )
             {
-                if( p.Name != "Dealer" )
+                if( p.Name != "Dealer" && p.isNewPlayer == false )
                 {
                     if( p.HandStatus == HandStatusType.BlackJack )
                     {
