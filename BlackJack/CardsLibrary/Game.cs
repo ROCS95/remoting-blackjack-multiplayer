@@ -157,7 +157,7 @@ namespace BlackJackLibrary
         {
             try
             {
-                if( getPlayer( name ) != null )
+                if( getPlayer( name ).Name != null )
                 {
                     if( getPlayer( name ).Status == PlayerStatusType.Playing )
                     {
