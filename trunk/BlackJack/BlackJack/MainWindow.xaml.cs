@@ -59,7 +59,7 @@ namespace BlackJackClient
 
                     connected = game.testConnection();
 
-                    lblStatus.Content = "Please enter a name and click join";
+                    lblStatus.Content = "Please Enter a Name and Click Join";
 
                 }
                 catch( Exception )
@@ -134,11 +134,11 @@ namespace BlackJackClient
             //make sure the bet is not greater then the current bank
             if( Convert.ToInt32(txtBank.Text) < Convert.ToInt32(txtBid.Text))
             {
-                lblStatus.Content = "You must place a bet lower then your bank!";
+                lblStatus.Content = "You Must Place a Bet Lower Than Your Bank!";
             }
             else if( Convert.ToInt32(txtBid.Text) <= 0)
             {
-                lblStatus.Content = "You must place a bet higher then zero!";
+                lblStatus.Content = "You Must Place a Bet Higher Than Zero!";
             }
             else
             {
@@ -323,7 +323,7 @@ namespace BlackJackClient
                         btnDoubleDown.IsEnabled = false;
                         txtBid.IsEnabled = true;
                         txtBid.Background = Brushes.Yellow;
-                        lblStatus.Content = "\nPlease place your bet";
+                        lblStatus.Content = "\nPlease Place Your Bet";
                         if( txtBid.Text == "" || txtBid.Text == null )
                             btnReady.IsEnabled = false;
                         else
@@ -345,19 +345,19 @@ namespace BlackJackClient
                         switch( player.HandStatus )
                         {
                             case HandStatusType.BlackJack:
-                                lblStatus.Content = "\nBlackJack!\nPlease place your next bet";
+                                lblStatus.Content = "\nBlackJack!\nPlease Place Your Next Bet";
                                 break;
                             case HandStatusType.Bust:
-                                lblStatus.Content = "\nSorry, You Bust\nPlease place your next bet";
+                                lblStatus.Content = "\nSorry, You Bust\nPlease Place Your Next Bet";
                                 break;
                             case HandStatusType.Winner:
-                                lblStatus.Content = "\nWinner, Winner, Chicken Dinner!\nPlease place your next bet";
+                                lblStatus.Content = "\nWinner, Winner, Chicken Dinner!\nPlease Place Your Next Bet";
                                 break;
                             case HandStatusType.Loser:
-                                lblStatus.Content = "\nSorry, Dealer Wins\nPlease place your next bet";
+                                lblStatus.Content = "\nSorry, Dealer Wins\nPlease Place Your Next Bet";
                                 break;
                             case HandStatusType.Push:
-                                lblStatus.Content = "\nPush\nPlease place your next bet";
+                                lblStatus.Content = "\nPush\nPlease Place Your Next Bet";
                                 break;
                             default:
                                 if( player.Status != PlayerStatusType.Playing && player.Status != PlayerStatusType.Betting )
@@ -368,7 +368,7 @@ namespace BlackJackClient
                     else
                     {
                         //inform new players that the game is in progress
-                        lblStatus.Content = "Game currently in progress. \n Please wait until next round";
+                        lblStatus.Content = "Game Currently in Progress...\nPlease Wait Until the Next Round";
                     }
                     
                     //update the players bank
