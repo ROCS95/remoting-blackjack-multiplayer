@@ -1,4 +1,11 @@
-﻿using System;
+﻿/*Title: BlackJackLibrary
+* Page: Game.cs
+* Author: Brooke Thrower and Jeramie Hallyburton
+* Description: The Client used to display a GUI for users to play a basic BlackJack game
+* Uses: BackJackLibrary.cs
+* Created: Mar. 22, 2011
+*/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +22,7 @@ namespace BlackJackLibrary
         private bool isGameInPlay = false;
         private bool isRoundFinished = false;
 
+        //bool to track if the round is finished
         public bool IsRoundFinished
         {
             get
@@ -28,13 +36,13 @@ namespace BlackJackLibrary
         }
         public ICallback CallBack = null;
 
+        //set up dealer when the game begins
         public Game()
         {
             players.Add( new Player( "Dealer" ) );
             getPlayer( "Dealer" ).Status = PlayerStatusType.Ready;
         }
 
-        public int GetPlayerCount() { return players.Count; }
         public void Join( string name, ICallback callback )
         {
             foreach( Player p in players )
@@ -56,7 +64,7 @@ namespace BlackJackLibrary
                     newPlayer.Status = PlayerStatusType.Done;
                     newPlayer.isNewPlayer = true;
                 }
-                Console.WriteLine( "Player {0} has just joined the game!", newPlayer.Name );
+                Console.WriteLine( "Player {0} has just joined the game.", newPlayer.Name );
                 updateAllClients();
             }
             else
@@ -64,14 +72,6 @@ namespace BlackJackLibrary
                 Console.WriteLine( "Game is full {0} could not join.", name );
                 throw new Exception( "This Game is full" );
             }
-        }
-
-        public void Hit( string name )
-        {
-            currentPlayer = getPlayer( name );
-            Console.WriteLine( "Player {0} has hit:", name );
-            dealCards( 1 );
-            updateAllClients();
         }
 
         public void Ready( int bet, string name )
@@ -118,14 +118,12 @@ namespace BlackJackLibrary
 
         }
 
-        public Player getPlayer( string name )
+        public void Hit( string name )
         {
-            foreach( Player player in players )
-            {
-                if( name.Equals( player.Name ) )
-                    return player;
-            }
-            return new Player( null );
+            currentPlayer = getPlayer( name );
+            Console.WriteLine( "Player {0} has hit:", name );
+            dealCards( 1 );
+            updateAllClients();
         }
 
         public void Stay( string name )
@@ -145,6 +143,16 @@ namespace BlackJackLibrary
             switchToNextPlayer();
         }
 
+        public Player getPlayer( string name )
+        {
+            foreach( Player player in players )
+            {
+                if( name.Equals( player.Name ) )
+                    return player;
+            }
+            return new Player( null );
+        }
+       
         public void removePlayer( string name )
         {
             try
@@ -180,11 +188,35 @@ namespace BlackJackLibrary
             return cards;
         }
 
-        private void updateAllClients()
+        private void switchToNextPlayer()
         {
-            foreach( Player player in players )
-                if( !player.Name.Equals( "Dealer" ) )
-                    callbacks[player.Name].PlayerUpdate( players );
+            currentPlayer.Status = PlayerStatusType.Done;
+            if( currentPlayer != players[players.Count - 1] )
+            {
+                //mark next player in list to play
+                for( ; ; )
+                {
+                    if( players[players.IndexOf( currentPlayer ) + 1].Status == PlayerStatusType.Ready )
+                    {
+                        players[players.IndexOf( currentPlayer ) + 1].Status = PlayerStatusType.Playing;
+                        Console.WriteLine( "Player {0} is now Playing.", players[players.IndexOf( currentPlayer ) + 1].Name );
+                        break;
+                    }
+                    else
+                    {
+                        currentPlayer = players[players.IndexOf( currentPlayer ) + 1];
+                    }
+                }
+            }
+            updateAllClients();
+            if( getPlayer( "Dealer" ).Status == PlayerStatusType.Playing )
+            {
+                currentPlayer = getPlayer( "Dealer" );
+                finishDealerHand();
+                currentPlayer.Status = PlayerStatusType.Done;
+                determinePayouts();
+                updateAllClients();
+            }
         }
 
         private void dealStartingPlayerCards()
@@ -219,20 +251,6 @@ namespace BlackJackLibrary
                         //end current hand
                         p.Status = PlayerStatusType.Done;
                         p.HandStatus = HandStatusType.BlackJack;
-                        //if( currentPlayer.Name.Equals( "Dealer" ) )
-                        //{
-                        //    currentPlayer = getPlayer( "Dealer" );
-                        //    foreach( Player player in players )
-                        //    {
-                        //        player.Status = PlayerStatusType.Done;
-                        //        if( player.HandStatus != HandStatusType.BlackJack && !player.isNewPlayer )
-                        //            player.HandStatus = HandStatusType.Loser;
-                        //    }
-                        //    isRoundFinished = true;
-                        //    determinePayouts();
-                        //    updateAllClients();
-                        //}
-
                     }
                 }
             }
@@ -356,35 +374,11 @@ namespace BlackJackLibrary
             }
         }
 
-        private void switchToNextPlayer()
+        private void updateAllClients()
         {
-            currentPlayer.Status = PlayerStatusType.Done;
-            if( currentPlayer != players[players.Count - 1] )
-            {
-                //mark next player in list to play
-                for( ; ; )
-                {
-                    if( players[players.IndexOf( currentPlayer ) + 1].Status == PlayerStatusType.Ready )
-                    {
-                        players[players.IndexOf( currentPlayer ) + 1].Status = PlayerStatusType.Playing;
-                        Console.WriteLine( "Player {0} is now Playing.", players[players.IndexOf( currentPlayer ) + 1].Name );
-                        break;
-                    }
-                    else
-                    {
-                        currentPlayer = players[players.IndexOf( currentPlayer ) + 1];
-                    }
-                }
-            }
-            updateAllClients();
-            if( getPlayer( "Dealer" ).Status == PlayerStatusType.Playing )
-            {
-                currentPlayer = getPlayer( "Dealer" );
-                finishDealerHand();
-                currentPlayer.Status = PlayerStatusType.Done;
-                determinePayouts();
-                updateAllClients();
-            }
+            foreach( Player player in players )
+                if( !player.Name.Equals( "Dealer" ) )
+                    callbacks[player.Name].PlayerUpdate( players );
         }
     }
 }
